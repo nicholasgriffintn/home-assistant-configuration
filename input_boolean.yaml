@@ -1,0 +1,21 @@
+guest_mode_lm:
+  name: 'Guest Mode'
+  initial: false
+iphone_charging:
+  name: My phone's is charging
+  initial: false
+alarm_turned_off:
+  name: My phone's alarm has been turned off
+  initial: false
+away_mode:
+  name: Trigger my home's away mode
+  initial: false
+home_mode:
+  name: Trigger my home's home mode
+  initial: false
+wind_down:
+  name: Wind Down
+  initial: false
+bedtime:
+  name: Bedtime
+  initial: false

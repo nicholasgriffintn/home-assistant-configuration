@@ -1,0 +1,21 @@
+status_announcement:
+  sequence:
+    - service: notify.notify
+      data:
+        message: "{{states('sensor.morning_announcement')}}"
+      enabled: false
+    - service: notify.alexa_media_echo_show_5
+      data:
+        message: "{{states('sensor.morning_announcement')}}"
+        data:
+          type: tts
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.echo_show_5
+      data:
+        media_content_id: play my morning announcement
+        media_content_type: routine
+        enqueue: replace
+  alias: Morning Announcement
+  mode: single
+  icon: mdi:weather-sunny-alert

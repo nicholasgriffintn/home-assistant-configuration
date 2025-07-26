@@ -1,0 +1,8 @@
+- platform: london_underground
+  line:
+    - Central
+    - Hammersmith & City
+    - Circle
+    - District
+    - Central
+    - Elizabeth
