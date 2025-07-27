@@ -3,7 +3,7 @@
 homeassistant:
   customize_domain:
     automation:
-      initial_state: 'on'
+      initial_state: true
   auth_providers:
     - type: homeassistant
     - type: trusted_networks
@@ -12,7 +12,7 @@ homeassistant:
         - 192.168.4.0/24
 
 default_config:
-  
+
 config:
 
 frontend:
@@ -61,10 +61,10 @@ zone:
 tts:
   - platform: google_translate
 
-automation: !include automations.yaml
-script: !include scripts.yaml
-scene: !include scenes.yaml
-template: !include templates.yaml
-input_boolean: !include input_boolean.yaml
-sensor: !include sensors.yaml
-light: !include light_groups.yaml
+automation: !include_dir_merge_named automation
+script: !include_dir_merge_named script
+scene: !include_dir_merge_named scene
+template: !include_dir_merge_named template
+input_boolean: !include_dir_merge_named input_boolean
+sensor: !include_dir_merge_named sensor
+light: !include_dir_merge_named light
