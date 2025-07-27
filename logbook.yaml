@@ -1,0 +1,5 @@
+exclude:
+  entity_globs:
+    - sensor.*_location
+    - sensor.*_geocoded_location
+    - weather.*

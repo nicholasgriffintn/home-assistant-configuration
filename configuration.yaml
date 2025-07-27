@@ -1,5 +1,33 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
+
+homeassistant:
+  customize_domain:
+    automation:
+      initial_state: 'on'
+  auth_providers:
+    - type: homeassistant
+    - type: trusted_networks
+      trusted_networks:
+        - 127.0.0.0/24
+        - 192.168.4.0/24
+
 default_config:
+  
+config:
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+cloud:
+
+alexa:
+  filter:
+    include_domains:
+      - light
+      - switch
+      - cover
+      - input_boolean
+      - camera
 
 http:
   ip_ban_enabled: false
@@ -9,16 +37,9 @@ http:
     - 172.30.33.0/24
     - 192.168.4.0/24
 
-homeassistant:
-  auth_providers:
-    - type: homeassistant
-    - type: trusted_networks
-      trusted_networks:
-        - 127.0.0.0/24
-        - 192.168.4.0/24
-
-frontend:
-  themes: !include_dir_merge_named themes
+logbook: !include logbook.yaml
+logger: !include logger.yaml
+recorder: !include recorder.yaml
 
 ffmpeg:
 
@@ -37,24 +58,13 @@ zone:
     radius: 200
     icon: mdi:briefcase
 
-logger:
-  default: error
-  logs:
-    homeassistant.components.image_processing: critical
-    homeassistant.components.camera.generic: critical
-    homeassistant.components.media_player: critical
-    homeassistant.components.sensor.darksky: critical
-    homeassistant.core: critical
-    homeassistant.helpers.entity: critical
-    homeassistant.components.http.ban: warning
-
 tts:
   - platform: google_translate
 
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
-recorder: !include recorder.yaml
 template: !include templates.yaml
 input_boolean: !include input_boolean.yaml
 sensor: !include sensors.yaml
+light: !include light_groups.yaml

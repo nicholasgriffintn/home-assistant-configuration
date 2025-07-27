@@ -1,0 +1,10 @@
+- platform: group
+  name: Living Room Lights
+  entities:
+    - light.living_room_ceiling
+    - light.wiz_rgbww_tunable_0368da
+
+- platform: group
+  name: Bedroom Lights
+  entities:
+    - light.wiz_rgbww_tunable_020656
