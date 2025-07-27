@@ -1,0 +1,15 @@
+sensor:
+  - name: 'Dashboard Title'
+    unique_id: ba292855-ae67-480d-9867-29cdb20afaeb
+    state: >
+      {%- if as_timestamp(now()) | timestamp_custom('%H') | int < 12 -%}Good
+      Morning           {%- elif as_timestamp(now()) | timestamp_custom('%H') |
+      int < 18 -%}Good Afternoon           {%- else -%}Good Evening{%- endif
+      -%}{{user}}!
+
+  - name: 'Dashboard Subtitle'
+    unique_id: ba292855-ae67-480d-9867-29cdb20afaec
+    state: >-
+      Your home's temperature is {{ states('sensor.weather_station_temperature') }}°C. Humidity is {{states('sensor.weather_station_humidity')}}%.
+
+      The outside temperature is {{states('sensor.openweathermap_temperature')}}°C, and humidity is {{states('sensor.openweathermap_humidity')}}%.

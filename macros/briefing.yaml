@@ -1,0 +1,158 @@
+>-
+  {%- macro garbage_day() -%}
+    {% set day_of_week = now().strftime('%a') %}
+    {% if day_of_week in ['Sun'] %}
+    Today is garbage day.
+    {% if day_of_week == 'Sun' %}
+        Both Recycling and regular Garbage goes out. 
+    {% endif %}
+    {% endif %}
+  {%- endmacro -%}
+
+  {%- macro inside_weather() -%}
+     Inside the house, it is {{ states('sensor.weather_station_temperature') }} degrees with {{ states('sensor.weather_station_humidity') }} percent humidity. [Only mention humidity if it seems unusually high]
+  {%- endmacro -%}
+
+  {% macro outside_weather() %}
+    [Here is the current weather outside]
+    {%- for entity in states.sensor if 'openweathermap' in entity.entity_id %}
+        {%- set state = entity.state %}
+        {%- set unit = entity.attributes.unit_of_measurement if 'unit_of_measurement' in entity.attributes else '' %}
+        {%- set friendly_name = ' '.join(entity.attributes.friendly_name.split(' ')[1:]) %}
+        {%- if state not in ['0', '0.0', 'none'] and 'UV Index' not in friendly_name %}
+        {%- if 'Temperature' in friendly_name -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- elif 'Feels like temperature' in friendly_name -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- elif 'Rain' in friendly_name -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- elif 'Wind Speed' in friendly_name and state | float > 15 -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- elif 'Cloud coverage' in friendly_name and state | float > 75 -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- elif 'Humidity' in friendly_name and (state | float < 50 or state | float > 85) -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- endif -%}
+        {%- endif %}
+    {% endfor -%}
+  {%- endmacro -%}
+
+  {%- macro moon() -%}
+        {% if (now().hour == 17) %}
+        Current Moon phase: {{ states('sensor.moon') }} [Give a fact and mention today's phase]
+        {% endif %}
+  {%- endmacro -%}
+
+  {%- macro uv() -%}
+  {% if states.sensor.openweathermap_uv_index.state|int(9999)>= 6 %}
+      Today's UV index is {{ states.sensor.openweathermap_uv_index.state }}. 
+    {%- for entity in states.sensor if 'openweathermap' in entity.entity_id %}
+        {%- set state = entity.state %}
+        {%- set unit = entity.attributes.unit_of_measurement if 'unit_of_measurement' in entity.attributes else '' %}
+        {%- set friendly_name = ' '.join(entity.attributes.friendly_name.split(' ')[1:]) %}
+        {%- if state not in ['0', '0.0', 'none'] and 'UV Index' not in friendly_name %}
+        {%- if 'Temperature' in friendly_name -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- elif 'Feels like temperature' in friendly_name -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- elif 'Cloud Ccverage' in friendly_name and state | float > 75 -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- elif 'Humidity' in friendly_name and (state | float < 50 or state | float > 85) -%}
+            {{ friendly_name }}: {{ state }} {{ unit }}
+        {%- endif -%}
+        {%- endif %}
+    {% endfor -%}
+      [Give helpful tip based on the current UV index and weather conditions]
+  {% endif %}
+  {%- endmacro -%}
+
+  {%- macro holiday() -%}
+  {% if states.sensor.holiday.state != '' %}
+      Today is {{ states.sensor.holiday.state }}. [Give an interesting fact or quote related to today]
+  {% endif %}
+  {%- endmacro -%}
+
+  {%- macro days_until() -%}
+  {%- if states('sensor.mothers_countdown') | int(9999)< 20  -%}
+    and don't forget, there is only {{ states.sensor.mothers_countdown.state }} days until Mothers day!
+  {%- elif states('sensor.fathers_countdown') | int(9999)< 20  -%}
+      and don't forget, there are {{ states.sensor.fathers_countdown.state }} days until Fathers day!
+  {%- elif states('sensor.easter_countdown') | int(9999)< 15  -%}
+      and don't forget, there are {{ states.sensor.easter_countdown.state }} days until Easter Sunday!
+  {%- elif states('sensor.thanksgiving_day_countdown') | int(9999)< 10 and states('sensor.thanksgiving_day_countdown') | int(9999)> 0  -%}
+      and don't forget, there are {{ states.sensor.thanksgiving_day_countdown.state }} thankful days until Thanksgiving
+  {%- elif states('sensor.thanksgiving_day_countdown') | int(9999)< 1  -%}
+      and don't forget, Thanksgiving is tomorrow!
+  {%- elif states('sensor.halloween_countdown') | int(9999)< 30 and states('sensor.halloween_countdown') | int(9999)> 0 -%}
+      and don't forget, there are {{ states.sensor.halloween_countdown.state }} Spooky days until Halloween!
+  {%- elif states('sensor.halloween_countdown') | int(9999)< 1  -%}
+      and don't forget, Tomorrow is Halloween!
+  {%- elif states('sensor.chanukkah_countdown') | int(9999)< 15  -%}
+      and don't forget, there are {{ states.sensor.chanukkah_countdown.state }} days until Chanukkah!
+  {%- elif states('sensor.christmas_countdown') | int(9999)< 30 and states('sensor.christmas_countdown') | int(9999)> 0  -%}
+      and don't forget, there are {{ states.sensor.christmas_countdown.state }} Merry days until Christmas!
+  {%- elif states('sensor.christmas_countdown') | int(9999)< 1  -%}
+      and don't forget, Santa Claus is coming tomorrow!
+  {% endif %}
+  {%- endmacro -%}
+
+  {% macro inspirational_quote() %}
+        [Include an inspirational quote relevant to the day or situation at the end of the message"]
+  {% endmacro %}
+
+  {% macro fact_of_the_day() %}
+        [Include a relevant fact about something that happened in the past on this day at the end of the message]
+  {% endmacro %}
+
+  {%- macro cleanup(data) -%}
+    {%- for item in data.split("\n")  if item | trim != "" -%}
+    {{ item | trim | replace("_", " ") }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# ********************************************* #}
+  {#  ******** Start the Speech routines ********  #}
+  {# ********************************************* #}
+
+  {%- macro call_all_macros() -%}
+    {% set current_date = now() %} 
+    {% set month = current_date.strftime('%B') %} 
+    {% set day_of_week = now().strftime('%a') %}
+    {% set hour = now().hour %}
+    {% set minute = now().minute %}
+    {% set day = current_date.strftime('%d') %} 
+    {% set year = current_date.strftime('%Y') %}
+    {% set time = current_date.strftime('%I:%M %p') %}
+    Current date time: {{ month }} {{ day }}, {{ year }} {{ time }}
+
+    New Information: 
+    {% if call_no_announcement != 1 %}
+      {% if now().strftime('%H')|int(9999)< 12 and now().strftime('%H')|int(9999)> 6 %}
+          Good morning.
+      {% elif now().strftime('%H')|int(9999)>= 12 and now().strftime('%H')|int(9999)< 17 %}
+          Good afternoon.
+      {% else %}
+          Good evening.
+      {% endif %}
+    {% endif %}
+
+    {% if call_inside_weather == 1 %}
+    {{ inside_weather() }}
+    {% endif %}
+
+    {% if call_outside_weather == 1 and is_state('sun.sun', 'above_horizon') %}
+    {{ outside_weather() }}
+    {% endif %}
+
+    {% if call_garbage_day == 1 %}
+    {{ garbage_day() }}
+    {% endif %}
+
+    {% if value1 is not none %}
+    {{ value1 | default }}
+    {% endif %}
+
+    {# call a Random fact about the house or inspiration quote #}
+    {{ ([moon, uv, holiday, days_until, outside_weather, outside_weather, inspirational_quote, fact_of_the_day]|random)() }}
+
+  {%- endmacro -%}
+  {{- cleanup(call_all_macros()) -}}

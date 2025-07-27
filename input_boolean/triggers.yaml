@@ -1,0 +1,21 @@
+wind_down:
+  name: Wind Down
+  initial: false
+bedtime:
+  name: Bedtime
+  initial: false
+good_night:
+  name: Good Night
+  initial: false
+good_morning:
+  name: Good Morning
+  initial: false
+watching_tv:
+  name: Watching TV
+  initial: false
+at_work:
+  name: At Work
+  initial: false
+send_guard_dog:
+  name: Send Guard Dog
+  initial: false

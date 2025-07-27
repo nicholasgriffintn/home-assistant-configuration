@@ -1,0 +1,8 @@
+emergency:
+  sequence:
+    - service: scene.turn_on
+      entity_id: scene.lr_emergency
+    - service: scene.turn_on
+      entity_id: scene.hr_emergency
+    - service: scene.turn_on
+      entity_id: scene.br_emergency

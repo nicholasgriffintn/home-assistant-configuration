@@ -1,0 +1,6 @@
+- name: Emergency
+  id: hr_emergency
+  entities:
+    light.home_assistant_voice_093870_led_ring:
+      state: on
+      brightness: 100

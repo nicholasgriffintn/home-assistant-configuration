@@ -1,0 +1,10 @@
+- name: Emergency
+  id: br_emergency
+  entities:
+    light.home_assistant_voice_093870_led_ring:
+      state: on
+      brightness: 100
+    light.wiz_rgbww_tunable_020656:
+      state: on
+      brightness: 100
+      rgb_color: [255, 0, 0] # Red color for emergency

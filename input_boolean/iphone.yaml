@@ -1,0 +1,6 @@
+iphone_charging:
+  name: My phone's is charging
+  initial: false
+alarm_turned_off:
+  name: My phone's alarm has been turned off
+  initial: false

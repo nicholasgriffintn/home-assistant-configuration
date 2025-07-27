@@ -61,7 +61,8 @@ zone:
 tts:
   - platform: google_translate
 
-automation: !include_dir_merge_named automation
+automation manual: !include_dir_merge_list automation
+automation ui: !include automations.yaml
 script: !include_dir_merge_named script
 scene: !include_dir_merge_named scene
 template: !include_dir_merge_named template

@@ -1,0 +1,18 @@
+home_mode:
+  name: Trigger my home's home mode
+  initial: false
+away_mode:
+  name: Trigger my home's away mode
+  initial: false
+guest_mode_lm:
+  name: 'Guest Mode'
+  initial: false
+alert_mode:
+  name: 'Alert Mode'
+  initial: false
+speech_notifications:
+  name: Speech Notifications
+  initial: true
+text_notifications:
+  name: Text Notifications
+  initial: true

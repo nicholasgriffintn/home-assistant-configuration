@@ -1,0 +1,47 @@
+text_notification:
+  sequence:
+    - condition: or
+      conditions:
+        - condition: state
+          entity_id: input_boolean.text_notifications
+          state: 'on'
+
+    - service: >
+        {% if who == 'me' %}
+          notify.mobile_app_ng_iphone
+        {% else %}
+          notify.mobile_app_ng_iphone
+        {% endif %}
+      data:
+        title: '{{ title }}'
+        message: '{{ value1 }} {{ value2 }} {{ value3 }}'
+        data:
+          group: "{{ group|default('information') }}"
+          interuption_level: "{{ level|default('active') }}"
+          entity_id: "{{ camera_entity|default('', true) }}"
+
+briefing_notification:
+  mode: queued
+  sequence:
+    - condition: or
+      conditions:
+        - condition: state
+          entity_id: alarm_control_panel.london_alarm
+          state: 'disarmed'
+        - condition: state
+          entity_id: input_boolean.guest_mode
+          state: 'on'
+
+    - service: script.trigger_speech
+      data:
+        media_player: >-
+          {% if media_player | length == 0 %}
+            {% set media_player = [
+              'media_player.home_assistant_voice_093870_media_player'
+            ] %}
+          {% endif %}
+          {% if media_player is not string and media_player is sequence %}
+            {% set media_player = media_player|join(', ') %}
+          {% endif %}
+          {{ media_player }}
+        speech_message: !include ../macros/briefing.yaml

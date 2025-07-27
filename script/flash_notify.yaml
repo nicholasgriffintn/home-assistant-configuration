@@ -1,0 +1,4 @@
+flash_notify:
+  sequence:
+    - service: light.turn_on
+      entity_id: light.home_assistant_voice_093870_led_ring
