@@ -3,368 +3,249 @@
   description: Log changes to the person state
   initial_state: true
   trigger:
-    - platform: state
-      entity_id: person.nicholas_griffin
+  - platform: state
+    entity_id: person.nicholas_griffin
   condition:
-    - condition: template
-      value_template: '{{ trigger.from_state.state != trigger.to_state.state }}'
+  - condition: template
+    value_template: '{{ trigger.from_state.state != trigger.to_state.state }}'
   action:
-    - service: logbook.log
-      data_template:
-        name: 'Person: '
-        message:
-          '{{trigger.to_state.name}} changed from {{trigger.from_state.state}}
-          to {{trigger.to_state.state}} by {{ trigger.to_state.attributes.source }}'
-- id: '1644170446233'
-  alias: Turn on hallway light when the door is opened
-  description: ''
-  trigger:
-    - platform: state
-      entity_id: binary_sensor.front_door
-      from: 'off'
-      to: 'on'
-  condition:
-    - condition: time
-      after: '17:00:00'
-      before: 09:00:00
-    - condition: state
-      entity_id: sun.sun
-      state: below_horizon
-  action:
-    - type: turn_on
-      device_id: 31411105a5cb81cded27fafc060e734e
-      entity_id: light.ceiling_2
-      domain: light
-      brightness_pct: 55
-    - wait_for_trigger:
-        - platform: state
-          entity_id: binary_sensor.hallway
-          from: 'on'
-          to: 'off'
-          for:
-            hours: 0
-            minutes: 1
-            seconds: 0
-    - type: turn_off
-      device_id: 31411105a5cb81cded27fafc060e734e
-      entity_id: light.ceiling_2
-      domain: light
-  mode: single
-- id: '1644170739229'
-  alias: Activate Hallway on Motion
-  description: ''
-  trigger:
-    - platform: state
-      entity_id: binary_sensor.hallway
-      from: 'off'
-      to: 'on'
-  condition:
-    - condition: time
-      after: '17:00:00'
-      before: 09:00:00
-    - condition: device
-      type: is_off
-      device_id: 31411105a5cb81cded27fafc060e734e
-      entity_id: light.ceiling_2
-      domain: light
-    - condition: state
-      entity_id: sun.sun
-      state: below_horizon
-  action:
-    - type: turn_on
-      device_id: 31411105a5cb81cded27fafc060e734e
-      entity_id: light.ceiling_2
-      domain: light
-      brightness_pct: 15
-    - wait_for_trigger:
-        - platform: state
-          entity_id: binary_sensor.hallway
-          from: 'on'
-          to: 'off'
-          for:
-            hours: 0
-            minutes: 1
-            seconds: 0
-    - type: turn_off
-      device_id: 31411105a5cb81cded27fafc060e734e
-      entity_id: light.ceiling_2
-      domain: light
-  mode: single
+  - service: logbook.log
+    data_template:
+      name: 'Person: '
+      message: '{{trigger.to_state.name}} changed from {{trigger.from_state.state}}
+        to {{trigger.to_state.state}} by {{ trigger.to_state.attributes.source }}'
 - id: '1644172266377'
   alias: Activate Living Room on Motion
   description: ''
   trigger:
+  - platform: state
+    entity_id: binary_sensor.living_room
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.living_room_motion
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: time
+    after: '17:00:00'
+    before: 09:00:00
+  - condition: device
+    type: is_off
+    device_id: efcba9ccea8d46a6dbf7851704e5aa43
+    entity_id: light.wiz_rgbww_tunable_0368da
+    domain: light
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  - condition: state
+    entity_id: input_boolean.guest_mode_lm
+    state: 'off'
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  action:
+  - type: turn_on
+    device_id: efcba9ccea8d46a6dbf7851704e5aa43
+    entity_id: light.wiz_rgbww_tunable_0368da
+    domain: light
+    brightness_pct: 40
+  - wait_for_trigger:
     - platform: state
       entity_id: binary_sensor.living_room
-      from: 'off'
-      to: 'on'
-    - platform: state
-      entity_id: binary_sensor.living_room_motion
-      from: 'off'
-      to: 'on'
-  condition:
-    - condition: time
-      after: '17:00:00'
-      before: 09:00:00
-    - condition: device
-      type: is_off
-      device_id: efcba9ccea8d46a6dbf7851704e5aa43
-      entity_id: light.wiz_rgbww_tunable_0368da
-      domain: light
+      to: 'off'
       for:
-        hours: 0
-        minutes: 0
-        seconds: 30
-    - condition: state
-      entity_id: input_boolean.guest_mode_lm
-      state: 'off'
-    - condition: state
-      entity_id: sun.sun
-      state: below_horizon
-  action:
-    - type: turn_on
-      device_id: efcba9ccea8d46a6dbf7851704e5aa43
-      entity_id: light.wiz_rgbww_tunable_0368da
-      domain: light
-      brightness_pct: 40
-    - wait_for_trigger:
-        - platform: state
-          entity_id: binary_sensor.living_room
-          to: 'off'
-          for:
-            hours: 0
-            minutes: 1
-            seconds: 0
-          from: 'on'
-        - platform: state
-          entity_id: binary_sensor.living_room_motion
-          from: 'on'
-          to: 'off'
-          for:
-            hours: 0
-            minutes: 1
-            seconds: 0
-      timeout:
         hours: 0
         minutes: 1
         seconds: 0
-        milliseconds: 0
-    - type: turn_off
-      device_id: efcba9ccea8d46a6dbf7851704e5aa43
-      entity_id: light.wiz_rgbww_tunable_0368da
-      domain: light
+      from: 'on'
+    - platform: state
+      entity_id: binary_sensor.living_room_motion
+      from: 'on'
+      to: 'off'
+      for:
+        hours: 0
+        minutes: 1
+        seconds: 0
+    timeout:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - type: turn_off
+    device_id: efcba9ccea8d46a6dbf7851704e5aa43
+    entity_id: light.wiz_rgbww_tunable_0368da
+    domain: light
   mode: single
 - id: '1644172665396'
   alias: Arm alarm away when away mode is on
   description: ''
   trigger:
-    - platform: state
-      entity_id: input_boolean.away_mode
-      from: 'off'
-      to: 'on'
+  - platform: state
+    entity_id: input_boolean.away_mode
+    from: 'off'
+    to: 'on'
   condition: []
   action:
-    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-      domain: alarm_control_panel
-      entity_id: alarm_control_panel.london_alarm
-      type: arm_away
+  - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+    domain: alarm_control_panel
+    entity_id: alarm_control_panel.london_alarm
+    type: arm_away
   mode: single
 - id: '1644172721979'
   alias: Disarm alarm when away mode is off
   description: ''
   trigger:
-    - platform: state
-      entity_id: input_boolean.away_mode
-      from: 'on'
-      to: 'off'
+  - platform: state
+    entity_id: input_boolean.away_mode
+    from: 'on'
+    to: 'off'
   condition: []
   action:
-    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-      domain: alarm_control_panel
-      entity_id: alarm_control_panel.london_alarm
-      type: disarm
+  - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+    domain: alarm_control_panel
+    entity_id: alarm_control_panel.london_alarm
+    type: disarm
   mode: single
 - id: '1644172973947'
   alias: Arm alarm home when home mode is on
   description: ''
   trigger:
-    - platform: state
-      entity_id: input_boolean.home_mode
-      from: 'off'
-      to: 'on'
+  - platform: state
+    entity_id: input_boolean.home_mode
+    from: 'off'
+    to: 'on'
   condition: []
   action:
-    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-      domain: alarm_control_panel
-      entity_id: alarm_control_panel.london_alarm
-      type: arm_home
+  - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+    domain: alarm_control_panel
+    entity_id: alarm_control_panel.london_alarm
+    type: arm_home
   mode: single
 - id: '1644173009664'
   alias: Disarm alarm home when home mode is off
   description: ''
   trigger:
-    - platform: state
-      entity_id: input_boolean.home_mode
-      from: 'on'
-      to: 'off'
+  - platform: state
+    entity_id: input_boolean.home_mode
+    from: 'on'
+    to: 'off'
   condition: []
   action:
-    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-      domain: alarm_control_panel
-      entity_id: alarm_control_panel.london_alarm
-      type: disarm
+  - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+    domain: alarm_control_panel
+    entity_id: alarm_control_panel.london_alarm
+    type: disarm
   mode: single
 - id: '1644180357751'
   alias: Arm Home when iPhone is Plugged In
   description: ''
   trigger:
-    - platform: state
-      entity_id: input_boolean.iphone_charging
-      from: 'off'
-      to: 'on'
+  - platform: state
+    entity_id: input_boolean.iphone_charging
+    from: 'off'
+    to: 'on'
   condition:
-    - condition: state
-      entity_id: alarm_control_panel.london_alarm
-      state: disarmed
-    - condition: time
-      after: '20:00:00'
-      before: 09:00:00
+  - condition: state
+    entity_id: alarm_control_panel.london_alarm
+    state: disarmed
+  - condition: time
+    after: '20:00:00'
+    before: 09:00:00
   action:
-    - if:
-        - type: is_not_open
-          condition: device
-          device_id: b59607a56734120d2196a0030b539ce0
-          entity_id: binary_sensor.back_door
-          domain: binary_sensor
-      then:
-        - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-          domain: alarm_control_panel
-          entity_id: alarm_control_panel.london_alarm
-          type: arm_home
-      else:
-        - wait_for_trigger:
-            - type: not_opened
-              platform: device
-              device_id: b59607a56734120d2196a0030b539ce0
-              entity_id: binary_sensor.back_door
-              domain: binary_sensor
-              for:
-                hours: 0
-                minutes: 0
-                seconds: 15
-        - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-          domain: alarm_control_panel
-          entity_id: alarm_control_panel.london_alarm
-          type: arm_home
-  mode: single
-- id: '1644623269837'
-  alias: Start Cleaning
-  description: ''
-  triggers:
-    - entity_id: input_boolean.toggle_robot_cleaning
-      from: 'off'
-      to: 'on'
-      trigger: state
-  conditions: []
-  actions:
-    - device_id: 9390a8a374e777ca6d86a99bdab68548
-      domain: vacuum
-      entity_id: 2508a4e7d8ed0922ed9592176a98f20e
-      type: clean
-  mode: single
-- id: '1644623346544'
-  alias: Stop Cleaning
-  description: ''
-  triggers:
-    - entity_id: input_boolean.toggle_robot_cleaning
-      from: 'on'
-      to: 'off'
-      trigger: state
-  conditions: []
-  actions:
-    - device_id: 9390a8a374e777ca6d86a99bdab68548
-      domain: vacuum
-      entity_id: 2508a4e7d8ed0922ed9592176a98f20e
-      type: dock
-  mode: single
-- id: '1644623535908'
-  alias: Robot, Go Home
-  description: ''
-  triggers:
-    - entity_id: input_boolean.tell_robot_to_go_home
-      from: 'off'
-      to: 'on'
-      trigger: state
-  conditions: []
-  actions:
-    - device_id: 9390a8a374e777ca6d86a99bdab68548
-      domain: vacuum
-      entity_id: 2508a4e7d8ed0922ed9592176a98f20e
-      type: dock
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 5
-        milliseconds: 0
-    - data: {}
-      target:
-        entity_id: input_boolean.tell_robot_to_go_home
-      action: input_boolean.toggle
+  - if:
+    - type: is_not_open
+      condition: device
+      device_id: b59607a56734120d2196a0030b539ce0
+      entity_id: binary_sensor.back_door
+      domain: binary_sensor
+    then:
+    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+      domain: alarm_control_panel
+      entity_id: alarm_control_panel.london_alarm
+      type: arm_home
+    else:
+    - wait_for_trigger:
+      - type: not_opened
+        platform: device
+        device_id: b59607a56734120d2196a0030b539ce0
+        entity_id: binary_sensor.back_door
+        domain: binary_sensor
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 15
+    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+      domain: alarm_control_panel
+      entity_id: alarm_control_panel.london_alarm
+      type: arm_home
   mode: single
 - id: '1653093939079'
   alias: Notify Me About The Bin
   description: ''
   trigger:
-    - platform: calendar
-      event: start
-      entity_id: calendar.garbage_collection
+  - platform: calendar
+    event: start
+    entity_id: calendar.garbage_collection
   condition: []
   action:
-    - service: notify.notify
-      data:
-        message: It's time to take the bin out
-        title: Take the bin out
+  - service: notify.mobile_app
+    data:
+      message: It's time to take the bin out
+      title: Take the bin out
   mode: single
 - id: '1653179156634'
   alias: Morning Announcement
   description: ''
   triggers:
-    - entity_id:
-        - input_boolean.alarm_turned_off
-      from: 'off'
-      to: 'on'
-      trigger: state
+  - entity_id:
+    - input_boolean.alarm_turned_off
+    from: 'off'
+    to: 'on'
+    trigger: state
   conditions: []
   actions:
-    - data: {}
-      action: script.status_announcement
-    - target:
-        entity_id: input_boolean.alarm_turned_off
-      data: {}
-      action: input_boolean.turn_off
+  - target:
+      entity_id: input_boolean.alarm_turned_off
+    data: {}
+    action: input_boolean.turn_off
+  - action: conversation.process
+    metadata: {}
+    data:
+      text: 'Here is the morning announcement for today, please re-word this into
+        something that makes me want to wake up, including the states: {{states(''sensor.morning_announcement'')}}'
+      agent_id: 01JS4DFR4SWX9W0RK7PDHRG1YH
+    response_variable: agent
+  - parallel:
     - device_id: 3c58ee0b4722e7cdc6759e75c0a66833
       domain: mobile_app
       type: notify
-      message: "{{states('sensor.morning_announcement')}}"
+      message: '{{ agent.response.speech.plain.speech }}'
       title: Morning Announcement
+    - action: assist_satellite.announce
+      metadata: {}
       data:
-        image: '{{weather_image.value}}'
+        message: '{{ agent.response.speech.plain.speech }}'
+        preannounce: true
+      target:
+        device_id: b2cd7d49f45144ddb35b315ebced9c2e
   mode: single
 - id: '1653179426954'
   alias: Disarm Home when iPhone is disconnected
   description: ''
   trigger:
-    - platform: state
-      entity_id:
-        - input_boolean.iphone_charging
-      from: 'on'
-      to: 'off'
+  - platform: state
+    entity_id:
+    - input_boolean.iphone_charging
+    from: 'on'
+    to: 'off'
   condition: []
   action:
-    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-      domain: alarm_control_panel
-      entity_id: alarm_control_panel.london_alarm
-      type: disarm
+  - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+    domain: alarm_control_panel
+    entity_id: alarm_control_panel.london_alarm
+    type: disarm
   mode: single
 - id: '1653179675148'
   alias: Send a camera snapshot when motion is detected
@@ -372,8 +253,8 @@
   use_blueprint:
     path: vorion/send-camera-snapshot-notification-on-motion.yaml
     input:
-      motion_sensor: binary_sensor.living_room_motion
-      camera: camera.kitchen_camera_snapshots
+      motion_sensor: binary_sensor.bedroom_motion
+      camera: camera.bedroom_snapshot
       notify_device: 3c58ee0b4722e7cdc6759e75c0a66833
       is_ios: true
 - id: '1653235942168'
@@ -386,120 +267,78 @@
       exclude:
         entity_id: []
         device_id:
-          - ec757fea75df99cc72bc01e7ab911210
-          - 9f25d62430c13c146f18838016e64124
-          - c3552cea1af390ada66c075ec5b27b3d
+        - ec757fea75df99cc72bc01e7ab911210
+        - 9f25d62430c13c146f18838016e64124
+        - c3552cea1af390ada66c075ec5b27b3d
       actions:
-        - service: notify.notify
-          data:
-            message: The battery of the sensor(s) {{sensors}} is low.
-- id: '1656162681304'
-  alias: Turn VacBot on at 5
-  description: ''
-  triggers:
-    - at: '17:30:00'
-      trigger: time
-  conditions: []
-  actions:
-    - type: turn_on
-      device_id: 323e5790ec16f2a73350456ccd2b4353
-      entity_id: switch.vacbot
-      domain: switch
-    - delay:
-        hours: 0
-        minutes: 1
-        seconds: 0
-        milliseconds: 0
-    - if:
-        - condition: device
-          device_id: a7fe10c4353ad14df685757cd9b4c2a3
-          domain: alarm_control_panel
-          entity_id: alarm_control_panel.london_alarm
-          type: is_armed_away
-      then:
-        - wait_for_trigger:
-            - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-              domain: alarm_control_panel
-              entity_id: alarm_control_panel.london_alarm
-              type: disarmed
-              trigger: device
-          continue_on_timeout: false
-        - device_id: 9390a8a374e777ca6d86a99bdab68548
-          domain: vacuum
-          entity_id: 2508a4e7d8ed0922ed9592176a98f20e
-          type: clean
-      else:
-        - device_id: 9390a8a374e777ca6d86a99bdab68548
-          domain: vacuum
-          entity_id: 2508a4e7d8ed0922ed9592176a98f20e
-          type: clean
-  mode: single
-- id: '1656162729419'
-  alias: Turn VacBot off when it has finished charging
-  description: ''
-  trigger:
-    - type: power
-      platform: device
-      device_id: 323e5790ec16f2a73350456ccd2b4353
-      entity_id: sensor.vacbot_current_power
-      domain: sensor
-      below: 2
-  condition:
-    - condition: time
-      before: 05:00:00
-      after: '20:00:00'
-      weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-        - sat
-        - sun
-  action:
-    - type: turn_off
-      device_id: 323e5790ec16f2a73350456ccd2b4353
-      entity_id: switch.vacbot
-      domain: switch
-  mode: single
+      - service: notify.mobile_app
+        data:
+          message: The battery of the sensor(s) {{sensors}} is low.
 - id: '1663619981748'
   alias: Turn on bedroom spott on motion
   description: ''
-  trigger:
-    - platform: state
-      entity_id:
-        - binary_sensor.bedroom
-      from: 'off'
-      to: 'on'
-  condition:
-    - condition: time
-      after: '17:00:00'
-      before: 09:00:00
-    - condition: device
-      type: is_off
-      device_id: 698f5064f1b18c46a302de08f8424974
-      entity_id: light.wiz_rgbww_tunable_020656
-      domain: light
-    - condition: state
-      entity_id: sun.sun
-      state: below_horizon
-  action:
+  triggers:
+  - entity_id:
+    - binary_sensor.hallway
+    from: 'off'
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: time
+    after: '17:00:00'
+    before: 09:00:00
+  - condition: device
+    type: is_off
+    device_id: 698f5064f1b18c46a302de08f8424974
+    entity_id: light.wiz_rgbww_tunable_020656
+    domain: light
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  actions:
+  - type: turn_on
+    device_id: 698f5064f1b18c46a302de08f8424974
+    entity_id: light.wiz_rgbww_tunable_020656
+    domain: light
+  - wait_for_trigger:
+    - entity_id:
+      - binary_sensor.hallway
+      from: 'on'
+      to: 'off'
+      for:
+        hours: 0
+        minutes: 1
+        seconds: 0
+      trigger: state
+  - type: turn_off
+    device_id: 698f5064f1b18c46a302de08f8424974
+    entity_id: light.wiz_rgbww_tunable_020656
+    domain: light
+  mode: single
+- id: '1753647106010'
+  alias: Night Bedside Scan
+  description: ''
+  triggers:
+  - trigger: tag
+    tag_id: night-bedside
+    id: night-bedside
+  conditions: []
+  actions:
+  - parallel:
     - type: turn_on
-      device_id: 698f5064f1b18c46a302de08f8424974
-      entity_id: light.wiz_rgbww_tunable_020656
-      domain: light
-    - wait_for_trigger:
-        - platform: state
-          entity_id:
-            - binary_sensor.bedroom
-          from: 'on'
-          to: 'off'
-          for:
-            hours: 0
-            minutes: 1
-            seconds: 0
+      device_id: 3ba682f99276b7fd7adca3dddbcf917e
+      entity_id: f4742d0409b0f7ee5aefc8c7a1cf4e1e
+      domain: switch
     - type: turn_off
       device_id: 698f5064f1b18c46a302de08f8424974
-      entity_id: light.wiz_rgbww_tunable_020656
+      entity_id: 7da4e0101d91a59da6b0839f9591af31
+      domain: light
+    - type: turn_off
+      device_id: 199982b8351961ad85d7d7ef84aefc21
+      entity_id: 181d3bea4e4138b28d1af81638a9c3fb
+      domain: light
+    - type: turn_off
+      device_id: efcba9ccea8d46a6dbf7851704e5aa43
+      entity_id: 4489250b176b8a8d0f1425542b60f15f
       domain: light
   mode: single

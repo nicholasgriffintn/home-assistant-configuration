@@ -1,30 +1,24 @@
 sensor:
-  - name: 'Dashboard Title'
+  - name: "Dashboard Title"
     unique_id: ba292855-ae67-480d-9867-29cdb20afaeb
     state: >
       {%- if as_timestamp(now()) | timestamp_custom('%H') | int < 12 -%}Good
       Morning           {%- elif as_timestamp(now()) | timestamp_custom('%H') |
       int < 18 -%}Good Afternoon           {%- else -%}Good Evening{%- endif
       -%}{{user}}!
-  - name: 'Dashboard Subtitle'
+  - name: "Dashboard Subtitle"
     unique_id: ba292855-ae67-480d-9867-29cdb20afaec
     state: >-
-      Your home's temperature is {{ states('sensor.home_weather_station_temperature') }}°C. Humidity is {{states('sensor.home_weather_station_humidity')}}%.
+      Your home's temperature is {{ states('sensor.weather_station_temperature') }}°C. Humidity is {{states('sensor.weather_station_humidity')}}%.
 
-      The outside temperature is {{states('sensor.home_weather_station_outdoor_module_temperature')}}°C, and humidity is {{states('sensor.home_weather_station_outdoor_module_humidity')}}%. {% for state in states.weather -%}
-        {%- if loop.first %}It is a {% elif loop.last %} and {% else %}, {% endif -%}
-        {{state.state_with_unit}}
-      {%- endfor %}. There is a {{ states('sensor.hammersmith_probability_of_precipitation_3_hourly') }}% chance of rain.
-  - name: 'Morning Announcement'
+      The outside temperature is {{states('sensor.openweathermap_temperature')}}°C, and humidity is {{states('sensor.openweathermap_humidity')}}%.
+  - name: "Morning Announcement"
     unique_id: ba292855-ae67-480d-9867-29cdb20afaea
     state: >
       {%- if as_timestamp(now()) | timestamp_custom('%H') | int < 12 -%}Good
       Morning           {%- elif as_timestamp(now()) | timestamp_custom('%H') |
       int < 18 -%}Good Afternoon           {%- else -%}Good Evening{%- endif
       -%}!
-      Your home's temperature is {{ states('sensor.home_weather_station_temperature') }}°C. Humidity is {{states('sensor.home_weather_station_humidity')}}%.
+      Your home's temperature is {{ states('sensor.weather_station_temperature') }}°C. Humidity is {{states('sensor.weather_station_humidity')}}%.
 
-      The outside temperature is {{states('sensor.home_weather_station_outdoor_module_temperature')}}°C, and humidity is {{states('sensor.home_weather_station_outdoor_module_humidity')}}%. {% for state in states.weather -%}
-        {%- if loop.first %}It is a {% elif loop.last %} and {% else %}, {% endif -%}
-        {{state.state_with_unit}}
-      {%- endfor %}. There is a {{ states('sensor.hammersmith_probability_of_precipitation_3_hourly') }}% chance of rain.
+      The outside temperature is {{states('sensor.openweathermap_temperature')}}°C, and humidity is {{states('sensor.openweathermap_humidity')}}%.
