@@ -9,7 +9,7 @@ trigger_speech:
               entity_id: alarm_control_panel.london_alarm
               state: 'disarmed'
             - condition: state
-              entity_id: input_boolean.guest_mode
+              entity_id: input_boolean.guest_mode_lm
               state: 'on'
         - condition: or
           conditions:
@@ -27,13 +27,21 @@ trigger_speech:
 
     - service: media_player.volume_set
       data:
-        entity_id: >
+        entity_id: >-
+          {% if media_player | length == 0 %}
+            {% set media_player = [
+              'media_player.home_assistant_voice_093870_media_player'
+            ] %}
+          {% endif %}
+          {% if media_player is not string and media_player is sequence %}
+            {% set media_player = media_player|join(', ') %}
+          {% endif %}
           {{ media_player }}
         volume_level: >-
           {% if now().strftime('%H')|int < 12 and now().strftime('%H')|int > 6 %}
-            0.2
+            0.45
           {% elif now().strftime('%H')|int > 12 and now().strftime('%H')|int < 20 %}
-            0.3
+            0.7
           {% else %}
             0.2
           {% endif %}

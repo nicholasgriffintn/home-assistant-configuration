@@ -29,7 +29,7 @@ briefing_notification:
           entity_id: alarm_control_panel.london_alarm
           state: 'disarmed'
         - condition: state
-          entity_id: input_boolean.guest_mode
+          entity_id: input_boolean.guest_mode_lm
           state: 'on'
 
     - service: script.trigger_speech

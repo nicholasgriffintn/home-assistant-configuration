@@ -152,7 +152,7 @@
     {% endif %}
 
     {# call a Random fact about the house or inspiration quote #}
-    {{ ([moon, uv, holiday, days_until, outside_weather, outside_weather, inspirational_quote, fact_of_the_day]|random)() }}
+    {{ ([moon, uv, holiday, days_until, outside_weather, inspirational_quote, fact_of_the_day]|random)() }}
 
   {%- endmacro -%}
   {{- cleanup(call_all_macros()) -}}
