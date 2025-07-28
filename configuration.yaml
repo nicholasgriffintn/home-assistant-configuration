@@ -10,6 +10,7 @@ homeassistant:
       trusted_networks:
         - 127.0.0.0/24
         - 192.168.4.0/24
+  packages: !include_dir_named packages
 
 default_config:
 

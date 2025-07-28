@@ -1,0 +1,81 @@
+homeassistant:
+  customize:
+    sensor.holiday:
+      icon: mdi:beach
+      friendly_name: UK Holiday
+
+sensor:
+  - platform: rest
+    resource: https://www.gov.uk/bank-holidays.json
+    name: Holiday
+    scan_interval: 14400
+    value_template: >
+      {% set today = now().strftime('%Y-%m-%d') %}
+      {% set holiday = "" %}
+      {% if value_json is defined and value_json['england-and-wales'] is defined %}
+        {% for event in value_json['england-and-wales'].events %}
+          {% if event.date == today %}
+            {% set holiday = event.title %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {{ holiday }}
+
+  - platform: rest
+    name: UK Bank Holidays
+    resource: https://www.gov.uk/bank-holidays.json
+    scan_interval: 14400
+    json_attributes:
+      - 'england-and-wales'
+    value_template: "{{ value_json['england-and-wales']['events'] | length }}"
+
+template:
+  - sensor:
+      - name: 'Next UK Holiday Countdown'
+        unit_of_measurement: 'days'
+        state: >
+          {% set today = now().date() %}
+          {% set england_wales = state_attr('sensor.uk_bank_holidays', 'england-and-wales') %}
+          {% if england_wales and england_wales['events'] %}
+            {% for event in england_wales['events'] %}
+              {% set event_date = strptime(event['date'], '%Y-%m-%d').date() %}
+              {% if event_date > today %}
+                {{ (event_date - today).days }}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+      - name: 'Christmas Day Countdown'
+        unit_of_measurement: 'days'
+        state: >
+          {% set today = now().date() %}
+          {% set england_wales = state_attr('sensor.uk_bank_holidays', 'england-and-wales') %}
+          {% if england_wales and england_wales['events'] %}
+            {% for event in england_wales['events'] %}
+              {% if 'Christmas' in event['title'] and 'Day' in event['title'] %}
+                {% set event_date = strptime(event['date'], '%Y-%m-%d').date() %}
+                {% if event_date >= today %}
+                  {{ (event_date - today).days }}
+                  {% break %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+      - name: 'Spring Bank Holiday Countdown'
+        unit_of_measurement: 'days'
+        state: >
+          {% set today = now().date() %}
+          {% set england_wales = state_attr('sensor.uk_bank_holidays', 'england-and-wales') %}
+          {% if england_wales and england_wales['events'] %}
+            {% for event in england_wales['events'] %}
+              {% if 'Spring' in event['title'] %}
+                {% set event_date = strptime(event['date'], '%Y-%m-%d').date() %}
+                {% if event_date >= today %}
+                  {{ (event_date - today).days }}
+                  {% break %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}

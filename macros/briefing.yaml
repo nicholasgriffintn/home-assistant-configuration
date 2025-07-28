@@ -73,27 +73,29 @@
   {%- endmacro -%}
 
   {%- macro days_until() -%}
-  {%- if states('sensor.mothers_countdown') | int(9999)< 20  -%}
-    and don't forget, there is only {{ states.sensor.mothers_countdown.state }} days until Mothers day!
-  {%- elif states('sensor.fathers_countdown') | int(9999)< 20  -%}
-      and don't forget, there are {{ states.sensor.fathers_countdown.state }} days until Fathers day!
-  {%- elif states('sensor.easter_countdown') | int(9999)< 15  -%}
-      and don't forget, there are {{ states.sensor.easter_countdown.state }} days until Easter Sunday!
-  {%- elif states('sensor.thanksgiving_day_countdown') | int(9999)< 10 and states('sensor.thanksgiving_day_countdown') | int(9999)> 0  -%}
-      and don't forget, there are {{ states.sensor.thanksgiving_day_countdown.state }} thankful days until Thanksgiving
-  {%- elif states('sensor.thanksgiving_day_countdown') | int(9999)< 1  -%}
-      and don't forget, Thanksgiving is tomorrow!
-  {%- elif states('sensor.halloween_countdown') | int(9999)< 30 and states('sensor.halloween_countdown') | int(9999)> 0 -%}
-      and don't forget, there are {{ states.sensor.halloween_countdown.state }} Spooky days until Halloween!
-  {%- elif states('sensor.halloween_countdown') | int(9999)< 1  -%}
-      and don't forget, Tomorrow is Halloween!
-  {%- elif states('sensor.chanukkah_countdown') | int(9999)< 15  -%}
-      and don't forget, there are {{ states.sensor.chanukkah_countdown.state }} days until Chanukkah!
-  {%- elif states('sensor.christmas_countdown') | int(9999)< 30 and states('sensor.christmas_countdown') | int(9999)> 0  -%}
-      and don't forget, there are {{ states.sensor.christmas_countdown.state }} Merry days until Christmas!
-  {%- elif states('sensor.christmas_countdown') | int(9999)< 1  -%}
-      and don't forget, Santa Claus is coming tomorrow!
+  {%- if states('sensor.christmas_day_countdown') | int(9999) < 30 and states('sensor.christmas_day_countdown') | int(9999) > 0  -%}
+      and don't forget, there are {{ states('sensor.christmas_day_countdown') }} days until Christmas!
+  {%- elif states('sensor.christmas_day_countdown') | int(9999) < 1  -%}
+      and don't forget, it's christmas day tomorrow!
+  {%- elif states('sensor.spring_bank_holiday_countdown') | int(9999) < 14 and states('sensor.spring_bank_holiday_countdown') | int(9999) > 0 -%}
+      and don't forget, there are {{ states('sensor.spring_bank_holiday_countdown') }} days until the Spring Bank Holiday!
+  {%- elif states('sensor.next_uk_holiday_countdown') | int(9999) < 7 and states('sensor.next_uk_holiday_countdown') | int(9999) > 0 -%}
+      and don't forget, there are {{ states('sensor.next_uk_holiday_countdown') }} days until the next UK bank holiday!
+  {%- elif states('sensor.next_uk_holiday_countdown') | int(9999) < 1  -%}
+      and don't forget, there's a UK bank holiday tomorrow!
   {% endif %}
+  {%- endmacro -%}
+
+  {%- macro light_check() -%}
+  {% if states.group.all_lights.state != 'off' -%}
+      There are
+  {% for state in states.light if state.state == 'on' -%}
+      {%- if loop.last -%}
+      {{ loop.index }}
+      {%- endif -%}
+  {%- endfor %}
+  lights on right now.
+  {% endif -%}
   {%- endmacro -%}
 
   {% macro inspirational_quote() %}
@@ -143,6 +145,10 @@
     {{ outside_weather() }}
     {% endif %}
 
+    {% if call_light_check == 1 %}
+    {{ light_check() }}
+    {% endif %}
+
     {% if call_garbage_day == 1 %}
     {{ garbage_day() }}
     {% endif %}
@@ -151,7 +157,6 @@
     {{ value1 | default }}
     {% endif %}
 
-    {# call a Random fact about the house or inspiration quote #}
     {{ ([moon, uv, holiday, days_until, outside_weather, inspirational_quote, fact_of_the_day]|random)() }}
 
   {%- endmacro -%}

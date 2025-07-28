@@ -39,11 +39,11 @@ trigger_speech:
           {{ media_player }}
         volume_level: >-
           {% if now().strftime('%H')|int < 12 and now().strftime('%H')|int > 6 %}
-            0.45
-          {% elif now().strftime('%H')|int > 12 and now().strftime('%H')|int < 20 %}
             0.7
+          {% elif now().strftime('%H')|int > 12 and now().strftime('%H')|int < 22 %}
+            0.9
           {% else %}
-            0.2
+            0.45
           {% endif %}
 
     - service: conversation.process
