@@ -1,0 +1,115 @@
+views:
+  - title: Mobile
+    path: mobile
+    icon: mdi:cellphone
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: markdown
+            content: |-
+              # {{ states('sensor.dashboard_title') }}
+
+              {{ states('sensor.dashboard_subtitle') }}
+            text_only: true
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: alarm_control_panel.london_alarm
+              - type: entity
+                entity: binary_sensor.front_door_2
+              - type: entity
+                entity: sensor.weather_station_carbon_dioxide
+              - type: entity
+                entity: sensor.plants_to_water
+              - type: entity
+                entity: media_player.bedroom
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:gesture-tap-button
+            heading: Run
+            heading_style: title
+          - type: custom:mushroom-template-card
+            primary: Good Morning
+            secondary: Briefing and Radio 1
+            icon: mdi:weather-sunset-up
+            icon_color: amber
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.good_morning
+          - type: custom:mushroom-template-card
+            primary: Good Night
+            secondary: Lock down and stop music
+            icon: mdi:weather-night
+            icon_color: indigo
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.good_night
+          - type: custom:mushroom-template-card
+            primary: Radio 1
+            secondary: Bedroom Music Assistant
+            icon: mdi:radio
+            icon_color: red
+            tap_action:
+              action: perform-action
+              perform_action: script.music_play_morning_bbc_radio_1
+          - type: custom:mushroom-template-card
+            primary: Pause House
+            secondary: Pause Music Assistant players
+            icon: mdi:pause-circle
+            icon_color: amber
+            tap_action:
+              action: perform-action
+              perform_action: script.music_pause_house
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:lightbulb-group
+            heading: Fast Controls
+            heading_style: title
+          - type: custom:mushroom-light-card
+            entity: light.living_room
+            name: Living Room
+            show_brightness_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.bedroom
+            name: Bedroom
+            show_brightness_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.entrance
+            name: Entrance
+            show_brightness_control: true
+            use_light_color: true
+          - type: custom:mushroom-fan-card
+            entity: fan.air_circulator
+            show_percentage_control: true
+            icon_animation: true
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:alert-circle
+            heading: Status
+            heading_style: title
+          - type: custom:tfl-status-card
+            entities:
+              - entity: sensor.london_underground_central
+                name: Central
+              - entity: sensor.london_underground_elizabeth_line
+                name: Elizabeth
+              - entity: sensor.london_underground_piccadilly
+                name: Piccadilly
+          - type: custom:mushroom-entity-card
+            entity: sensor.ng_iphone_watch_battery_level
+            name: Watch Battery
+          - type: custom:mushroom-entity-card
+            entity: sensor.plants_to_water
+            name: Plants to Water
+

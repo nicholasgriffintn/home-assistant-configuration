@@ -1,0 +1,91 @@
+views:
+  - title: Ops
+    path: ops
+    icon: mdi:server
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:backup-restore
+            heading: Home Assistant
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: sensor.backup_backup_manager_state
+            name: Backup State
+          - type: custom:mushroom-entity-card
+            entity: sensor.backup_last_successful_automatic_backup
+            name: Last Backup
+          - type: custom:mushroom-entity-card
+            entity: sensor.backup_next_scheduled_automatic_backup
+            name: Next Backup
+          - type: custom:mushroom-entity-card
+            entity: update.home_assistant_core_update
+          - type: custom:mushroom-entity-card
+            entity: update.home_assistant_operating_system_update
+          - type: custom:mushroom-entity-card
+            entity: update.home_assistant_supervisor_update
+          - type: heading
+            icon: mdi:alert
+            heading: Known Problem States
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: sensor.living_room_info
+            name: Living Room Sensor
+          - type: custom:mushroom-entity-card
+            entity: sensor.entryway_keypad_info
+            name: Entryway Keypad
+          - type: custom:mushroom-entity-card
+            entity: sensor.london_range_extender_info
+            name: Alarm Range Extender
+          - type: custom:mushroom-entity-card
+            entity: sensor.weather_station_reachability
+            name: Weather Station Reachability
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:battery-heart
+            heading: Batteries
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: sensor.ng_iphone_battery_level
+            name: iPhone
+          - type: custom:mushroom-entity-card
+            entity: sensor.ng_iphone_watch_battery_level
+            name: Watch
+          - type: custom:mushroom-entity-card
+            entity: sensor.front_door_battery_2
+            name: Front Door
+          - type: custom:mushroom-entity-card
+            entity: sensor.glass_break_sensor_battery
+            name: Glass Break
+          - type: custom:mushroom-entity-card
+            entity: sensor.weather_station_outdoor_module_battery
+            name: Outdoor Module
+          - type: custom:mushroom-entity-card
+            entity: sensor.london_range_extender_battery
+            name: Alarm Range Extender
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:network
+            heading: Network
+            heading_style: title
+          - type: custom:mini-graph-card
+            name: Cloudflare Speed Test
+            entities:
+              - entity: sensor.cloudflare_speed_test_90th_percentile_down
+                name: Down
+              - entity: sensor.cloudflare_speed_test_90th_percentile_up
+                name: Up
+              - entity: sensor.cloudflare_speed_test_latency
+                name: Latency
+          - type: custom:mushroom-entity-card
+            entity: sensor.cloudflare_speed_test_ip_address
+            name: IP Address
+          - type: custom:mushroom-entity-card
+            entity: sensor.cloudflare_speed_test_latency
+            name: Latency
+          - type: custom:pi-hole
+            device_id: b557adeb68087a2043f78e481dba466a

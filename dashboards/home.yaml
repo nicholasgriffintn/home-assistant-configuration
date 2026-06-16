@@ -1,0 +1,524 @@
+views:
+  - title: Home
+    sections:
+      - type: grid
+        cards:
+          - clock_size: small
+            show_seconds: false
+            type: clock
+            grid_options:
+              columns: full
+              rows: 1
+          - type: custom:weather-card
+            entity: weather.forecast_home
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: alarm_control_panel.london_alarm
+              - type: entity
+                entity: binary_sensor.front_door_2
+              - type: entity
+                entity: sensor.weather_station_carbon_dioxide
+              - type: entity
+                entity: sensor.plants_to_water
+          - type: heading
+            icon: mdi:controller
+            heading: Controls
+            heading_style: title
+          - type: custom:mushroom-fan-card
+            entity: fan.fan
+            grid_options:
+              columns: 6
+              rows: 2
+            show_percentage_control: true
+            show_oscillate_control: true
+            collapsible_controls: false
+            show_direction_control: true
+            icon_animation: true
+            fill_container: true
+          - type: custom:mushroom-fan-card
+            entity: fan.air_circulator
+            grid_options:
+              columns: 6
+              rows: 2
+            show_percentage_control: true
+            show_oscillate_control: true
+            collapsible_controls: false
+            show_direction_control: true
+            icon_animation: true
+            fill_container: true
+          - type: heading
+            icon: mdi:lightbulb
+            heading_style: title
+            heading: Lights
+          - type: custom:mushroom-light-card
+            entity: light.living_room
+            name: Living Ceiling
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.wiz_rgbww_tunable_0368da
+            show_brightness_control: true
+            show_color_control: true
+            show_color_temp_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.tv_strip
+            show_brightness_control: true
+            show_color_control: true
+            show_color_temp_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.wiz_rgbww_tunable_020656
+            use_light_color: true
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+          - type: custom:mushroom-light-card
+            entity: light.bedroom
+            use_light_color: true
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+          - type: custom:mushroom-light-card
+            entity: light.ledzha_deng
+            use_light_color: true
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+          - type: custom:mushroom-light-card
+            entity: light.entrance
+            use_light_color: true
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+          - type: custom:mushroom-light-card
+            entity: light.hallway
+            use_light_color: true
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+          - type: heading
+            icon: mdi:scent
+            heading_style: title
+            heading: Diffusers
+          - type: custom:mushroom-entity-card
+            entity: switch.diffuser_socket_1
+            name: Hallway Scent
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:gesture-tap-button
+            heading: Routines
+            heading_style: title
+          - type: custom:mushroom-template-card
+            primary: Good Morning
+            secondary: "{{ 'Running' if is_state('input_boolean.good_morning', 'on') else 'Briefing, lights and Radio 1' }}"
+            icon: mdi:weather-sunset-up
+            icon_color: "{{ 'amber' if is_state('input_boolean.good_morning', 'on') else 'disabled' }}"
+            entity: input_boolean.good_morning
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.good_morning
+          - type: custom:mushroom-template-card
+            primary: Good Night
+            secondary: "{{ 'Running' if is_state('input_boolean.good_night', 'on') else 'Dim bedroom, stop music and arm home' }}"
+            icon: mdi:weather-night
+            icon_color: "{{ 'indigo' if is_state('input_boolean.good_night', 'on') else 'disabled' }}"
+            entity: input_boolean.good_night
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.good_night
+          - type: custom:mushroom-template-card
+            primary: Wind Down
+            secondary: "{{ 'On' if is_state('input_boolean.wind_down', 'on') else 'Adaptive lighting across the flat' }}"
+            icon: mdi:lightbulb-night
+            icon_color: "{{ 'deep-orange' if is_state('input_boolean.wind_down', 'on') else 'disabled' }}"
+            entity: input_boolean.wind_down
+            tap_action:
+              action: toggle
+          - type: custom:mushroom-template-card
+            primary: Watching TV
+            secondary: "{{ 'On' if is_state('input_boolean.watching_tv', 'on') else 'Pause music and set the living room' }}"
+            icon: mdi:television-play
+            icon_color: "{{ 'cyan' if is_state('input_boolean.watching_tv', 'on') else 'disabled' }}"
+            entity: input_boolean.watching_tv
+            tap_action:
+              action: toggle
+          - type: custom:mushroom-template-card
+            primary: Guest Mode
+            secondary: "{{ 'On' if is_state('input_boolean.guest_mode_lm', 'on') else 'Suppress automatic ambience changes' }}"
+            icon: mdi:account-group
+            icon_color: "{{ 'green' if is_state('input_boolean.guest_mode_lm', 'on') else 'disabled' }}"
+            entity: input_boolean.guest_mode_lm
+            tap_action:
+              action: toggle
+          - type: custom:mushroom-template-card
+            primary: BBC Radio 1
+            secondary: "{{ 'Playing' if is_state('media_player.bedroom', 'playing') else 'Bedroom speaker' }}"
+            icon: mdi:radio
+            icon_color: "{{ 'red' if is_state('media_player.bedroom', 'playing') else 'disabled' }}"
+            tap_action:
+              action: perform-action
+              perform_action: script.music_play_morning_bbc_radio_1
+          - type: heading
+            icon: mdi:radio
+            heading: Media
+            heading_style: title
+          - type: custom:yet-another-media-player
+            entities:
+              - entity_id: media_player.bedroom
+              - entity_id: media_player.homepod
+              - entity_id: media_player.tv
+              - entity_id: media_player.tv_airplay
+              - entity_id: media_player.home_assistant_voice_093870_media_player
+              - entity_id: media_player.echo_show_5
+            collapsed_on_idle: true
+            always_collapsed: true
+            match_theme: true
+            alternate_progress_bar: false
+            show_chip_row: auto
+            hold_to_pin: true
+          - type: custom:mushroom-template-card
+            primary: Pause House
+            secondary: Pause all music
+            icon: mdi:pause-circle
+            icon_color: amber
+            tap_action:
+              action: perform-action
+              perform_action: script.music_pause_house
+          - type: custom:mushroom-template-card
+            primary: Stop House
+            secondary: Stop all music
+            icon: mdi:stop-circle
+            icon_color: red
+            tap_action:
+              action: perform-action
+              perform_action: script.music_stop_house
+          - type: heading
+            icon: mdi:alarm-light
+            heading: Security
+            heading_style: title
+          - type: custom:mushroom-alarm-control-panel-card
+            entity: alarm_control_panel.london_alarm
+            states:
+              - armed_home
+              - armed_away
+            grid_options:
+              columns: 12
+              rows: 2
+            fill_container: true
+            tap_action:
+              action: more-info
+            hold_action:
+              action: more-info
+            double_tap_action:
+              action: more-info
+            primary_info: name
+            secondary_info: state
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.front_door_2
+            fill_container: false
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.bedroom_motion
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.hallway_camera_motion
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.hallway
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.bedroom
+          - type: heading
+            icon: mdi:camera
+            heading: Cameras
+            heading_style: title
+          - type: custom:surveillance-card
+            thumb_interval: 15
+            update_interval: 2
+            recording_duration: 10
+            show_capture_buttons: false
+            focus_motion: true
+            grid_options:
+              columns: 12
+              rows: 4
+            cameras:
+              - entity: camera.living_room_live_view
+                motion_entity: binary_sensor.living_room
+              - entity: camera.entrance_live_view
+                motion_entity: binary_sensor.entrance_motion
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:alert-circle
+            heading: Needs Attention
+            heading_style: title
+          - type: conditional
+            conditions:
+              - entity: sensor.plants_to_water
+                state_not: "0"
+            card:
+              type: custom:mushroom-entity-card
+              entity: sensor.plants_to_water
+              name: Plants need water
+              icon: mdi:sprout
+              icon_color: light-blue
+              tap_action:
+                action: navigate
+                navigation_path: /house-home/care
+          - type: conditional
+            conditions:
+              - condition: numeric_state
+                entity: sensor.weather_station_carbon_dioxide
+                above: 1200
+            card:
+              type: custom:mini-graph-card
+              name: Indoor CO2
+              hours_to_show: 12
+              points_per_hour: 4
+              entities:
+                - entity: sensor.weather_station_carbon_dioxide
+                  name: CO2
+              color_thresholds:
+                - value: 800
+                  color: "#2e7d32"
+                - value: 1200
+                  color: "#f9a825"
+                - value: 1600
+                  color: "#c62828"
+          - type: conditional
+            conditions:
+              - entity: binary_sensor.core_travel_hours
+                state: "on"
+            card:
+              type: custom:tfl-status-card
+              entities:
+                - entity: sensor.london_underground_central
+                  name: Central
+                - entity: sensor.london_underground_circle
+                  name: Circle
+                - entity: sensor.london_underground_elizabeth_line
+                  name: Elizabeth
+                - entity: sensor.london_underground_hammersmith_city
+                  name: H&C
+                - entity: sensor.london_underground_piccadilly
+                  name: Piccadilly
+          - type: heading
+            icon: mdi:access-point-network
+            heading_style: title
+            heading: Info
+          - type: custom:mini-graph-card
+            name: Speed Test
+            entities:
+              - entity: sensor.cloudflare_speed_test_90th_percentile_up
+                name: Up
+              - entity: sensor.cloudflare_speed_test_90th_percentile_down
+                name: Down
+          - type: custom:mushroom-entity-card
+            entity: sensor.cloudflare_speed_test_ip_address
+            name: IP Address
+          - type: custom:mushroom-entity-card
+            entity: sensor.cloudflare_speed_test_latency
+            name: Latency
+          - type: custom:pi-hole
+            device_id: b557adeb68087a2043f78e481dba466a
+    header:
+      card:
+        type: markdown
+        content: |-
+          # {{ states('sensor.dashboard_title') }}
+
+          {{ states('sensor.dashboard_subtitle') }}
+        text_only: true
+      layout: start
+      badges_position: top
+      badges_wrap: wrap
+
+  - title: Rooms
+    path: rooms
+    icon: mdi:floor-plan
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:sofa
+            heading: Living Room
+            heading_style: title
+          - type: custom:mushroom-light-card
+            entity: light.living_room
+            name: Ceiling
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.wiz_rgbww_tunable_0368da
+            name: TV Backlight
+            show_brightness_control: true
+            show_color_control: true
+            show_color_temp_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.tv_strip
+            name: TV Strip
+            show_brightness_control: true
+            show_color_control: true
+            show_color_temp_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.sideboard_lights
+            name: Sideboard
+            show_brightness_control: true
+            use_light_color: true
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:bed-king
+            heading: Bedroom
+            heading_style: title
+          - type: custom:mushroom-light-card
+            entity: light.bedroom
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.wiz_rgbww_tunable_020656
+            name: Bedside Light
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+            use_light_color: true
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.bedroom
+            name: Motion
+          - type: custom:mushroom-entity-card
+            entity: sensor.bedroom_battery_2
+            name: Motion Battery
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:door
+            heading: Hallway & Entrance
+            heading_style: title
+          - type: custom:mushroom-light-card
+            entity: light.entrance
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.hallway
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+            use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.ledzha_deng
+            name: Lava Lamp
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+            use_light_color: true
+          - type: custom:mushroom-entity-card
+            entity: switch.diffuser_socket_1
+            name: Hallway Scent
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.front_door_2
+            name: Front Door
+
+  - title: Care
+    path: care
+    icon: mdi:heart-pulse
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:sprout
+            heading: Plants
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: sensor.plants_to_water
+            name: Plants to Water
+          - type: custom:mushroom-entity-card
+            entity: sensor.simple_plant_next_watering_susie
+            hold_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.simple_plant_mark_watered_susie
+          - type: custom:mushroom-entity-card
+            entity: sensor.simple_plant_next_watering_wallace
+            hold_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.simple_plant_mark_watered_wallace
+          - type: custom:mushroom-entity-card
+            entity: sensor.simple_plant_next_watering_spike
+            hold_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.simple_plant_mark_watered_spike
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:molecule-co2
+            heading: Air Quality
+            heading_style: title
+          - type: custom:mini-graph-card
+            name: CO2
+            entities:
+              - entity: sensor.weather_station_carbon_dioxide
+                name: CO2
+            hours_to_show: 24
+            points_per_hour: 2
+          - type: custom:mushroom-fan-card
+            entity: fan.air_circulator
+            show_percentage_control: true
+            show_oscillate_control: true
+            show_direction_control: true
+            icon_animation: true
+          - type: custom:mushroom-template-card
+            primary: Air Quality Boost
+            secondary: Boost is {{ states('input_boolean.air_quality_boost') }}
+            icon: mdi:fan-alert
+            icon_color: teal
+            entity: input_boolean.air_quality_boost
+            tap_action:
+              action: toggle
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:thermometer-water
+            heading: Comfort
+            heading_style: title
+          - type: custom:mini-graph-card
+            name: Temperature & Humidity
+            entities:
+              - entity: sensor.weather_station_temperature
+                name: Inside
+              - entity: sensor.openweathermap_temperature
+                name: Outside
+              - entity: sensor.weather_station_humidity
+                name: Humidity
+            hours_to_show: 24
+            points_per_hour: 2
+          - type: custom:mushroom-entity-card
+            entity: sensor.fan_pm_2_5
+            name: PM2.5
+          - type: custom:mushroom-entity-card
+            entity: sensor.fan_volatile_organic_compounds_index
+            name: VOC Index

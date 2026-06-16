@@ -37,7 +37,6 @@ http:
     - 172.30.33.0/24
     - 192.168.4.0/24
     - 10.0.0.0/24
-    - 10.0.0.21/24
 
 logbook: !include logbook.yaml
 logger: !include logger.yaml
@@ -70,3 +69,25 @@ light: !include_dir_merge_list light-groups
 
 automation ui: !include automations.yaml
 automation manual: !include_dir_merge_list automation
+
+lovelace:
+  dashboards:
+    house-home:
+      mode: yaml
+      filename: dashboards/home.yaml
+      title: Home
+      icon: mdi:home-outline
+      show_in_sidebar: true
+    house-mobile:
+      mode: yaml
+      filename: dashboards/mobile.yaml
+      title: Mobile
+      icon: mdi:cellphone
+      show_in_sidebar: true
+    house-ops:
+      mode: yaml
+      filename: dashboards/ops.yaml
+      title: Ops
+      icon: mdi:server
+      show_in_sidebar: true
+      require_admin: true
