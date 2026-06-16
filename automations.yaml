@@ -344,7 +344,9 @@
         value1: '{{ agent.response.speech.plain.speech }}'
         group: briefing
         tag: morning-announcement
+        url: entityId:sensor.morning_announcement
         message_limit: 180
+        is_critical: true
         actions:
         - action: MUSIC_PLAY_RADIO_1
           title: Radio 1
@@ -783,6 +785,7 @@
         {{ due.names | join(', ') }}
       group: plants
       tag: plants-water
+      url: entityId:sensor.plants_to_water
       actions:
       - action: PLANT_MARK_SPIKE_WATERED
         title: Spike watered
@@ -796,9 +799,6 @@
       - action: PLANT_REMIND_LATER
         title: Later
         icon: sfsymbols:clock
-      - action: URI
-        title: Open plants
-        uri: entityId:sensor.plants_to_water
   mode: single
 - id: daily_watch_battery_reminder
   alias: Daily watch battery reminder
@@ -817,6 +817,7 @@
       value1: >-
         Your watch is at {{ states('sensor.ng_iphone_watch_battery_level') }}%.
       group: devices
+      url: entityId:sensor.ng_iphone_watch_battery_level
   mode: single
 - id: high_indoor_co2_alert
   alias: High indoor CO2 alert
@@ -843,7 +844,9 @@
         ppm for 20 minutes.
       group: air-quality
       level: time-sensitive
+      is_critical: true
       tag: air-quality
+      url: entityId:sensor.weather_station_carbon_dioxide
       actions:
       - action: AIR_QUALITY_BOOST_NOW
         title: Boost fan
@@ -851,9 +854,6 @@
       - action: AIR_QUALITY_SNOOZE_2H
         title: Ignore 2h
         icon: sfsymbols:moon
-      - action: URI
-        title: Open air
-        uri: entityId:sensor.weather_station_carbon_dioxide
   mode: single
 - id: commute_tube_disruption_alert
   alias: Commute Tube disruption alert
@@ -892,14 +892,13 @@
         {{ trigger.to_state.state }}.
       group: commute
       level: time-sensitive
+      is_critical: true
       tag: commute-status
+      url: https://tfl.gov.uk/tube-dlr-overground/status/
       actions:
       - action: COMMUTE_MUTE_TODAY
         title: Mute today
         icon: sfsymbols:bell.slash
-      - action: URI
-        title: Open TfL
-        uri: https://tfl.gov.uk/tube-dlr-overground/status/
   mode: queued
 - id: reset_daily_mode_toggles
   alias: Reset daily mode toggles
@@ -958,6 +957,7 @@
         CO2 is {{ states('sensor.weather_station_carbon_dioxide') }} ppm, so the fan is running at 60%.
       group: air-quality
       tag: air-quality
+      url: entityId:fan.air_circulator
       actions:
       - action: AIR_QUALITY_STOP_BOOST
         title: Stop boost
@@ -992,6 +992,7 @@
       value1: >-
         CO2 is back down to {{ states('sensor.weather_station_carbon_dioxide') }} ppm, so the fan boost has stopped.
       group: air-quality
+      url: entityId:sensor.weather_station_carbon_dioxide
   mode: single
 - id: good_night_routine
   alias: Good Night routine
@@ -1064,6 +1065,7 @@
         value1: "{{ states('sensor.morning_announcement') }}"
         group: briefing
         tag: morning-briefing
+        url: entityId:sensor.morning_announcement
         message_limit: 180
         actions:
         - action: MUSIC_PLAY_RADIO_1
@@ -1072,12 +1074,6 @@
         - action: MORNING_READ_ALOUD
           title: Read aloud
           icon: sfsymbols:speaker.wave.2
-        - action: GOOD_MORNING_RUN
-          title: Run routine
-          icon: sfsymbols:sun.max
-        - action: URI
-          title: Open HA
-          uri: /lovelace/default_view
     - service: script.briefing_notification
       data:
         call_inside_weather: 1
@@ -1132,14 +1128,13 @@
         {{ disrupted.items | join('; ') }}
       group: commute
       level: time-sensitive
+      is_critical: true
       tag: commute-status
+      url: https://tfl.gov.uk/tube-dlr-overground/status/
       actions:
       - action: COMMUTE_MUTE_TODAY
         title: Mute today
         icon: sfsymbols:bell.slash
-      - action: URI
-        title: Open TfL
-        uri: https://tfl.gov.uk/tube-dlr-overground/status/
   mode: single
 - id: mobile_notification_actions
   alias: Mobile notification actions

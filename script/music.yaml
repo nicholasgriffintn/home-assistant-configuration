@@ -21,6 +21,10 @@ music_play:
             - album
             - artist
             - track
+    media_name:
+      name: Display name
+      selector:
+        text:
     volume:
       name: Volume
       selector:
@@ -33,6 +37,7 @@ music_play:
         target_player: "{{ media_player | default('media_player.homepod', true) }}"
         target_media_id: "{{ media_id | default('bbc_sounds://radio/bbc_radio_one', true) }}"
         target_media_type: "{{ media_type | default('radio', true) }}"
+        target_media_name: "{{ media_name | default(target_media_id, true) }}"
     - service: media_player.volume_set
       target:
         entity_id: "{{ target_player }}"
@@ -45,6 +50,22 @@ music_play:
         media_id: "{{ target_media_id }}"
         media_type: "{{ target_media_type }}"
         enqueue: replace
+    - service: script.text_notification
+      data:
+        title: Music started
+        subtitle: "{{ state_attr(target_player, 'friendly_name') | default('Music Assistant', true) }}"
+        value1: "{{ target_media_name }}"
+        group: music
+        tag: music-now-playing
+        url: "entityId:{{ target_player }}"
+        message_limit: 80
+        actions:
+          - action: MUSIC_PAUSE_HOUSE
+            title: Pause
+            icon: sfsymbols:pause.fill
+          - action: MUSIC_STOP_HOUSE
+            title: Stop
+            icon: sfsymbols:stop.fill
 
 music_play_morning_bbc_radio_1:
   alias: "Music: Play BBC Radio 1"
@@ -55,6 +76,7 @@ music_play_morning_bbc_radio_1:
         media_player: media_player.bedroom
         media_id: bbc_sounds://radio/bbc_radio_one
         media_type: radio
+        media_name: BBC Radio 1
         volume: 0.28
 
 music_pause_house:

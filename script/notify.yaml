@@ -34,8 +34,10 @@ text_notification:
           tag: "{{ tag | default(group | default(title | default('home-assistant'), true), true) }}"
           url: "{{ url | default('/lovelace/default_view', true) }}"
           actions: "{{ actions | default([], true) }}"
+          channel: "{{ 'critical_notifications' if is_critical | default(critical | default(false)) else channel | default(group | default('information'), true) }}"
+          importance: "{{ 'high' if is_critical | default(critical | default(false)) else importance | default('default') }}"
           push:
-            interruption-level: "{{ level|default('active') }}"
+            interruption-level: "{{ level | default('time-sensitive' if is_critical | default(critical | default(false)) else 'active') }}"
           entity_id: "{{ camera_entity|default('', true) }}"
 
 briefing_notification:
