@@ -1,7 +1,7 @@
 - platform: group
   name: Living Room Lights
   entities:
-    - light.living_room_ceiling
+    - light.living_room
     - light.wiz_rgbww_tunable_0368da
 
 - platform: group

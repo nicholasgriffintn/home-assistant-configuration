@@ -1,5 +1,3 @@
-# Configure a default setup of Home Assistant (frontend, api, etc)
-
 homeassistant:
   customize_domain:
     automation:
@@ -10,6 +8,7 @@ homeassistant:
       trusted_networks:
         - 127.0.0.0/24
         - 192.168.4.0/24
+        - 10.0.0.0/24
   packages: !include_dir_named packages
 
 default_config:
@@ -37,6 +36,7 @@ http:
   trusted_proxies:
     - 172.30.33.0/24
     - 192.168.4.0/24
+    - 10.0.0.0/24
 
 logbook: !include logbook.yaml
 logger: !include logger.yaml
@@ -59,14 +59,20 @@ zone:
     radius: 200
     icon: mdi:briefcase
 
-tts:
-  - platform: google_translate
+sensor:
+  - platform: london_underground
+    line:
+      - Elizabeth line
+      - Central
+      - Hammersmith & City
+      - Piccadilly
+      - Circle
 
-automation manual: !include_dir_merge_list automation
-automation ui: !include automations.yaml
 script: !include_dir_merge_named script
 scene: !include_dir_merge_named scene
 template: !include_dir_merge_named template
 input_boolean: !include_dir_merge_named input_boolean
-sensor: !include_dir_merge_named sensor
-light: !include_dir_merge_named light
+light groups: !include_dir_merge_named light-groups
+
+automation ui: !include automations.yaml
+automation manual: !include_dir_merge_list automation

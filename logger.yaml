@@ -39,7 +39,6 @@ logs:
   homeassistant.components.websocket_api: error
   homeassistant.components.image_processing: warn
   homeassistant.components.camera.generic: warn
-  homeassistant.core: critical
   homeassistant.components.http.ban: warning
   pubnub: critical
   py.warnings: error

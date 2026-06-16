@@ -126,6 +126,15 @@
     from: 'off'
     to: 'on'
     trigger: state
+  - trigger: state
+    entity_id:
+    - input_boolean.iphone_charging
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 1
   conditions:
   - condition: time
     after: '17:00:00'
@@ -135,28 +144,60 @@
     device_id: 698f5064f1b18c46a302de08f8424974
     entity_id: light.wiz_rgbww_tunable_020656
     domain: light
+  - condition: device
+    type: is_off
+    device_id: 049c1ead6b2b656db204fe8e995653a8
+    entity_id: 03c53d99b847896f1f8d6d4cca1b09e3
+    domain: light
   - condition: state
     entity_id: sun.sun
     state: below_horizon
   actions:
-  - type: turn_on
-    device_id: 698f5064f1b18c46a302de08f8424974
-    entity_id: light.wiz_rgbww_tunable_020656
-    domain: light
-  - wait_for_trigger:
-    - entity_id:
-      - binary_sensor.bedroom
-      from: 'on'
-      to: 'off'
-      for:
-        hours: 0
-        minutes: 1
-        seconds: 0
-      trigger: state
-  - type: turn_off
-    device_id: 698f5064f1b18c46a302de08f8424974
-    entity_id: light.wiz_rgbww_tunable_020656
-    domain: light
+  - parallel:
+    - type: turn_on
+      device_id: 698f5064f1b18c46a302de08f8424974
+      entity_id: light.wiz_rgbww_tunable_020656
+      domain: light
+      brightness_pct: 30
+    - type: turn_on
+      device_id: b25a6f1fdcef0b052e57805c536ab8e2
+      entity_id: f1e5e29893be5fc2b4e3360ddf2b45a4
+      domain: light
+      brightness_pct: 30
+  - if:
+    - condition: state
+      entity_id: input_boolean.iphone_charging
+      state: 'off'
+    then:
+    - wait_for_trigger:
+      - trigger: state
+        entity_id:
+        - input_boolean.iphone_charging
+        to: 'on'
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 1
+    else:
+    - wait_for_trigger:
+      - trigger: state
+        entity_id:
+        - binary_sensor.bedroom
+        to: 'off'
+        from: 'on'
+        for:
+          hours: 0
+          minutes: 1
+          seconds: 0
+  - parallel:
+    - type: turn_off
+      device_id: 698f5064f1b18c46a302de08f8424974
+      entity_id: light.wiz_rgbww_tunable_020656
+      domain: light
+    - type: turn_off
+      device_id: b25a6f1fdcef0b052e57805c536ab8e2
+      entity_id: f1e5e29893be5fc2b4e3360ddf2b45a4
+      domain: light
   mode: single
 - id: '1753647106010'
   alias: Night Bedside Scan
@@ -175,10 +216,6 @@
     - type: turn_off
       device_id: 698f5064f1b18c46a302de08f8424974
       entity_id: 7da4e0101d91a59da6b0839f9591af31
-      domain: light
-    - type: turn_off
-      device_id: 199982b8351961ad85d7d7ef84aefc21
-      entity_id: 181d3bea4e4138b28d1af81638a9c3fb
       domain: light
     - type: turn_off
       device_id: efcba9ccea8d46a6dbf7851704e5aa43
@@ -206,6 +243,16 @@
       hours: 0
       minutes: 0
       seconds: 30
+  - condition: device
+    type: is_off
+    device_id: 6280ae2aea2a22410c11101e70443128
+    entity_id: bb3dc0c27d7e543e7db2ab6492daf604
+    domain: light
+  - condition: device
+    type: is_off
+    device_id: 49b1228bb853e82785a1b12f8b1938d4
+    entity_id: 8f7da7216f29e40e88374c14d0b84e65
+    domain: light
   - condition: state
     entity_id: input_boolean.guest_mode_lm
     state: 'off'
@@ -311,6 +358,7 @@
       camera: camera.bedroom_snapshot
       notify_device: 3c58ee0b4722e7cdc6759e75c0a66833
       is_ios: true
+      delay: 0
 - id: '1653235942168'
   alias: Low battery level detection & notification for all battery sensors
   description: ''
@@ -379,3 +427,310 @@
     entity_id: input_boolean.watching_tv
   - service: scene.turn_on
     entity_id: scene.lr_watching_tv
+- id: '1754751285398'
+  alias: Turn on Entrance when there is motion
+  description: ''
+  triggers:
+  - entity_id:
+    - binary_sensor.hallway
+    from: 'off'
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: time
+    after: '17:00:00'
+    before: 09:00:00
+  - condition: device
+    type: is_off
+    device_id: 150733d084480fdc5c9dde79401bbb48
+    entity_id: d67e3538d6641188f4b1e096b5424267
+    domain: light
+  - condition: state
+    entity_id: input_boolean.guest_mode_lm
+    state: 'off'
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  actions:
+  - type: turn_on
+    device_id: 150733d084480fdc5c9dde79401bbb48
+    entity_id: d67e3538d6641188f4b1e096b5424267
+    domain: light
+    brightness_pct: 60
+  - wait_for_trigger:
+    - entity_id: binary_sensor.living_room
+      to: 'off'
+      for:
+        hours: 0
+        minutes: 1
+        seconds: 0
+      from: 'on'
+      trigger: state
+    timeout:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - type: turn_off
+    device_id: 150733d084480fdc5c9dde79401bbb48
+    entity_id: d67e3538d6641188f4b1e096b5424267
+    domain: light
+  mode: single
+- id: '1754751506085'
+  alias: Turn on Entrance when the Front Door is opened
+  description: ''
+  triggers:
+  - type: opened
+    device_id: 481a2531b2ca691dc7600d1e9ad7d9d3
+    entity_id: 4f44f4afea845c18026dbdfd18ba4da7
+    domain: binary_sensor
+    trigger: device
+  conditions:
+  - condition: sun
+    before: sunrise
+    after: sunset
+  actions:
+  - type: turn_on
+    device_id: 150733d084480fdc5c9dde79401bbb48
+    entity_id: d67e3538d6641188f4b1e096b5424267
+    domain: light
+  - delay:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - type: turn_off
+    device_id: 150733d084480fdc5c9dde79401bbb48
+    entity_id: d67e3538d6641188f4b1e096b5424267
+    domain: light
+  mode: single
+- id: '1754829674292'
+  alias: Turn on Diffuser morning
+  description: ''
+  triggers:
+  - trigger: time
+    at: 09:00:00
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  conditions:
+  - condition: state
+    entity_id: alarm_control_panel.london_alarm
+    state: disarmed
+  actions:
+  - parallel:
+    - type: turn_on
+      device_id: 155df171fea0a36293b44df835bd2774
+      entity_id: bbdb004b5a4332a66703c8277bcd7be7
+      domain: switch
+    - type: turn_on
+      device_id: 155df171fea0a36293b44df835bd2774
+      entity_id: 48c0a22ecbff9bdf0afd010d9fd6de6f
+      domain: switch
+  mode: single
+- id: '1754829748795'
+  alias: New automation
+  description: ''
+  triggers:
+  - trigger: time
+    at: '13:00:00'
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 155df171fea0a36293b44df835bd2774
+    entity_id: bbdb004b5a4332a66703c8277bcd7be7
+    domain: switch
+  mode: single
+- id: '1754829865729'
+  alias: Turn on diffuser evening
+  description: ''
+  triggers:
+  - trigger: time
+    at: '17:00:00'
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+  conditions:
+  - condition: state
+    entity_id: alarm_control_panel.london_alarm
+    state: disarmed
+  actions:
+  - parallel:
+    - type: turn_on
+      device_id: 155df171fea0a36293b44df835bd2774
+      entity_id: bbdb004b5a4332a66703c8277bcd7be7
+      domain: switch
+    - type: turn_on
+      device_id: 155df171fea0a36293b44df835bd2774
+      entity_id: 48c0a22ecbff9bdf0afd010d9fd6de6f
+      domain: switch
+  mode: single
+- id: '1754829911996'
+  alias: New automation
+  description: ''
+  triggers:
+  - trigger: time
+    at: '20:00:00'
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 155df171fea0a36293b44df835bd2774
+    entity_id: bbdb004b5a4332a66703c8277bcd7be7
+    domain: switch
+  mode: single
+- id: '1755202315436'
+  alias: Wind Down Lighting
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.wind_down
+    to: 'on'
+  conditions:
+  - condition: state
+    entity_id: input_boolean.guest_mode_lm
+    state: 'off'
+  actions:
+  - action: adaptive_lighting.apply
+    metadata: {}
+    data:
+      adapt_brightness: true
+      adapt_color: true
+      lights:
+      - light.bedroom
+      - light.wiz_rgbww_tunable_020656
+      - light.living_room
+      - light.wiz_rgbww_tunable_0368da
+      - light.hallway
+      - light.entrance
+      - light.tv_strip
+  mode: single
+- id: '1755202404657'
+  alias: Bedroom Adaptive Lighting Sleep Mode
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.bedtime
+    to: 'on'
+  conditions:
+  - condition: state
+    entity_id: input_boolean.guest_mode_lm
+    state: 'off'
+  actions:
+  - parallel:
+    - type: turn_on
+      device_id: e150043d8079312103c07baa10ecfa64
+      entity_id: f4844ea50b55232d7817c9026b0b0727
+      domain: switch
+  mode: single
+- id: '1755202447986'
+  alias: Living Room Adaptive Lighting Sleep Mode
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.bedtime
+    to: 'on'
+  conditions:
+  - condition: state
+    entity_id: input_boolean.guest_mode_lm
+    state: 'off'
+  actions:
+  - parallel:
+    - type: turn_on
+      device_id: 4ce4cb2f51b03ef6c00a93b85353f413
+      entity_id: 7cc8e01b0256aed6d1550c191438ca8a
+      domain: switch
+  mode: single
+- id: '1775527344212'
+  alias: 'HA Core: Auto-update patch versions'
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    hours: /4
+  conditions:
+  - condition: state
+    entity_id: update.home_assistant_core_update
+    state: 'on'
+  - condition: template
+    value_template: '{{ state_attr("update.home_assistant_core_update", "installed_version")[0:7]
+      == state_attr("update.home_assistant_core_update", "latest_version")[0:7] }}'
+  - condition: zone
+    entity_id: person.nicholas_griffin
+    zone: zone.home
+  - condition: state
+    entity_id: input_boolean.guest_mode_lm
+    state:
+    - 'off'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+  actions:
+  - action: notify.mobile_app_ng_iphone
+    metadata: {}
+    data:
+      message: Starting an automatic update
+  - action: update.install
+    target:
+      entity_id: update.home_assistant_core_update
+    data: {}
+  mode: single
+- id: '1775527585947'
+  alias: 'HA OS: Automated Update'
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    hours: /4
+  conditions:
+  - condition: state
+    entity_id: update.home_assistant_operating_system_update
+    state:
+    - 'on'
+  - condition: template
+    value_template: '{{ state_attr("update.home_assistant_core_update", "installed_version")[0:7]
+      == state_attr("update.home_assistant_core_update", "latest_version")[0:7] }}'
+  - condition: zone
+    entity_id: person.nicholas_griffin
+    zone: zone.home
+  - condition: state
+    entity_id: input_boolean.guest_mode_lm
+    state:
+    - 'off'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+  actions:
+  - action: notify.mobile_app_ng_iphone
+    metadata: {}
+    data:
+      message: Starting an automatic update
+  - action: update.install
+    data: {}
+    target:
+      entity_id: update.home_assistant_operating_system_update
+  mode: single
