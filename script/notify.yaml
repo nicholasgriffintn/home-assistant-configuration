@@ -14,10 +14,25 @@ text_notification:
       data:
         title: "{{ title | default('Home Assistant') }}"
         message: >-
-          {{ [value1 | default(''), value2 | default(''), value3 | default('')]
-          | reject('eq', '') | join(' ') }}
+          {% set raw = [value1 | default(''), value2 | default(''), value3 | default('')]
+          | reject('eq', '') | join(' ') %}
+          {% set clean = raw
+            | replace('\n', ' ')
+            | replace('**', '')
+            | replace('__', '')
+            | replace('###', '')
+            | replace('##', '')
+            | replace('#', '')
+            | replace('•', '')
+            | replace('—', '-')
+          %}
+          {{ clean | truncate(message_limit | default(220), true, '...') }}
         data:
+          subtitle: "{{ subtitle | default(group | default(''), true) }}"
+          subject: "{{ subject | default(title | default('Home Assistant'), true) }}"
           group: "{{ group|default('information') }}"
+          tag: "{{ tag | default(group | default(title | default('home-assistant'), true), true) }}"
+          url: "{{ url | default('/lovelace/default_view', true) }}"
           push:
             interruption-level: "{{ level|default('active') }}"
           entity_id: "{{ camera_entity|default('', true) }}"
