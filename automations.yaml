@@ -751,6 +751,9 @@
   - condition: state
     entity_id: alarm_control_panel.london_alarm
     state: disarmed
+  - condition: state
+    entity_id: input_boolean.plant_reminder_snoozed
+    state: 'off'
   action:
   - service: script.text_notification
     data:
@@ -770,6 +773,23 @@
         {% endif %}
         {{ due.names | join(', ') }}
       group: plants
+      tag: plants-water
+      actions:
+      - action: PLANT_MARK_SPIKE_WATERED
+        title: Spike watered
+        icon: sfsymbols:drop
+      - action: PLANT_MARK_SUSIE_WATERED
+        title: Susie watered
+        icon: sfsymbols:drop
+      - action: PLANT_MARK_WALLACE_WATERED
+        title: Wallace watered
+        icon: sfsymbols:drop
+      - action: PLANT_REMIND_LATER
+        title: Later
+        icon: sfsymbols:clock
+      - action: URI
+        title: Open plants
+        uri: entityId:sensor.plants_to_water
   mode: single
 - id: daily_watch_battery_reminder
   alias: Daily watch battery reminder
@@ -802,6 +822,9 @@
   - condition: state
     entity_id: alarm_control_panel.london_alarm
     state: disarmed
+  - condition: state
+    entity_id: input_boolean.air_quality_snoozed
+    state: 'off'
   action:
   - service: script.text_notification
     data:
@@ -811,6 +834,17 @@
         ppm for 20 minutes.
       group: air-quality
       level: time-sensitive
+      tag: air-quality
+      actions:
+      - action: AIR_QUALITY_BOOST_NOW
+        title: Boost fan
+        icon: sfsymbols:fan
+      - action: AIR_QUALITY_SNOOZE_2H
+        title: Ignore 2h
+        icon: sfsymbols:moon
+      - action: URI
+        title: Open air
+        uri: entityId:sensor.weather_station_carbon_dioxide
   mode: single
 - id: commute_tube_disruption_alert
   alias: Commute Tube disruption alert
@@ -825,6 +859,9 @@
   condition:
   - condition: template
     value_template: "{{ trigger.to_state.state not in ['Good Service', 'unknown', 'unavailable'] }}"
+  - condition: state
+    entity_id: input_boolean.commute_alerts_muted_today
+    state: 'off'
   - condition: or
     conditions:
     - condition: time
@@ -846,6 +883,14 @@
         {{ trigger.to_state.state }}.
       group: commute
       level: time-sensitive
+      tag: commute-status
+      actions:
+      - action: COMMUTE_MUTE_TODAY
+        title: Mute today
+        icon: sfsymbols:bell.slash
+      - action: URI
+        title: Open TfL
+        uri: https://tfl.gov.uk/tube-dlr-overground/status/
   mode: queued
 - id: reset_daily_mode_toggles
   alias: Reset daily mode toggles
@@ -862,6 +907,9 @@
       - input_boolean.good_night
       - input_boolean.watching_tv
       - input_boolean.send_guard_dog
+      - input_boolean.air_quality_snoozed
+      - input_boolean.commute_alerts_muted_today
+      - input_boolean.plant_reminder_snoozed
   mode: single
 - id: air_quality_boost_on
   alias: Air quality boost on
@@ -878,6 +926,9 @@
     state: disarmed
   - condition: state
     entity_id: input_boolean.air_quality_boost
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.air_quality_snoozed
     state: 'off'
   action:
   - service: input_boolean.turn_on
@@ -897,6 +948,14 @@
       value1: >-
         CO2 is {{ states('sensor.weather_station_carbon_dioxide') }} ppm, so the fan is running at 60%.
       group: air-quality
+      tag: air-quality
+      actions:
+      - action: AIR_QUALITY_STOP_BOOST
+        title: Stop boost
+        icon: sfsymbols:fan.slash
+      - action: AIR_QUALITY_SNOOZE_2H
+        title: Ignore 2h
+        icon: sfsymbols:moon
   mode: single
 - id: air_quality_boost_off
   alias: Air quality boost off
@@ -997,6 +1056,16 @@
         group: briefing
         tag: morning-briefing
         message_limit: 180
+        actions:
+        - action: MORNING_READ_ALOUD
+          title: Read aloud
+          icon: sfsymbols:speaker.wave.2
+        - action: GOOD_MORNING_RUN
+          title: Run routine
+          icon: sfsymbols:sun.max
+        - action: URI
+          title: Open HA
+          uri: /lovelace/default_view
     - service: script.briefing_notification
       data:
         call_inside_weather: 1
@@ -1026,6 +1095,9 @@
         states('sensor.london_underground_hammersmith_city'),
         states('sensor.london_underground_piccadilly')
       ] | reject('eq', 'Good Service') | reject('eq', 'unknown') | reject('eq', 'unavailable') | list | count > 0 }}
+  - condition: state
+    entity_id: input_boolean.commute_alerts_muted_today
+    state: 'off'
   action:
   - service: script.text_notification
     data:
@@ -1047,4 +1119,116 @@
         {{ disrupted.items | join('; ') }}
       group: commute
       level: time-sensitive
+      tag: commute-status
+      actions:
+      - action: COMMUTE_MUTE_TODAY
+        title: Mute today
+        icon: sfsymbols:bell.slash
+      - action: URI
+        title: Open TfL
+        uri: https://tfl.gov.uk/tube-dlr-overground/status/
   mode: single
+- id: mobile_notification_actions
+  alias: Mobile notification actions
+  description: Handle buttons tapped from Home Assistant mobile notifications.
+  trigger:
+  - platform: event
+    event_type: mobile_app_notification_action
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'PLANT_MARK_SPIKE_WATERED' }}"
+      sequence:
+      - service: button.press
+        target:
+          entity_id: button.simple_plant_mark_watered_spike
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'PLANT_MARK_SUSIE_WATERED' }}"
+      sequence:
+      - service: button.press
+        target:
+          entity_id: button.simple_plant_mark_watered_susie
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'PLANT_MARK_WALLACE_WATERED' }}"
+      sequence:
+      - service: button.press
+        target:
+          entity_id: button.simple_plant_mark_watered_wallace
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'PLANT_REMIND_LATER' }}"
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.plant_reminder_snoozed
+      - delay:
+          hours: 3
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.plant_reminder_snoozed
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'AIR_QUALITY_BOOST_NOW' }}"
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.air_quality_boost
+      - service: fan.turn_on
+        target:
+          entity_id: fan.air_circulator
+      - service: fan.set_percentage
+        target:
+          entity_id: fan.air_circulator
+        data:
+          percentage: 60
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'AIR_QUALITY_STOP_BOOST' }}"
+      sequence:
+      - service: fan.turn_off
+        target:
+          entity_id: fan.air_circulator
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.air_quality_boost
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'AIR_QUALITY_SNOOZE_2H' }}"
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.air_quality_snoozed
+      - delay:
+          hours: 2
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.air_quality_snoozed
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'COMMUTE_MUTE_TODAY' }}"
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.commute_alerts_muted_today
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'MORNING_READ_ALOUD' }}"
+      sequence:
+      - service: script.briefing_notification
+        data:
+          call_inside_weather: 1
+          call_garbage_day: 1
+          call_outside_weather: 1
+          call_light_check: 1
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'GOOD_MORNING_RUN' }}"
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.good_morning
+  mode: parallel
+  max: 10

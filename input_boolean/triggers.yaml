@@ -22,3 +22,12 @@ send_guard_dog:
 air_quality_boost:
   name: Air Quality Boost
   initial: false
+air_quality_snoozed:
+  name: Air Quality Snoozed
+  initial: false
+commute_alerts_muted_today:
+  name: Commute Alerts Muted Today
+  initial: false
+plant_reminder_snoozed:
+  name: Plant Reminder Snoozed
+  initial: false

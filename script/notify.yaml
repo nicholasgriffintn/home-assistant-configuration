@@ -33,6 +33,7 @@ text_notification:
           group: "{{ group|default('information') }}"
           tag: "{{ tag | default(group | default(title | default('home-assistant'), true), true) }}"
           url: "{{ url | default('/lovelace/default_view', true) }}"
+          actions: "{{ actions | default([], true) }}"
           push:
             interruption-level: "{{ level|default('active') }}"
           entity_id: "{{ camera_entity|default('', true) }}"
