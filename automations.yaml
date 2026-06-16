@@ -339,7 +339,11 @@
     - service: script.text_notification
       data:
         title: Morning Announcement
+        subtitle: Wake-up summary
         value1: '{{ agent.response.speech.plain.speech }}'
+        group: briefing
+        tag: morning-announcement
+        message_limit: 180
     - service: script.briefing_notification
       data:
         call_inside_weather: 1
@@ -988,8 +992,11 @@
     - service: script.text_notification
       data:
         title: Morning Briefing
+        subtitle: Weather, air quality and commute
         value1: "{{ states('sensor.morning_announcement') }}"
         group: briefing
+        tag: morning-briefing
+        message_limit: 180
     - service: script.briefing_notification
       data:
         call_inside_weather: 1
