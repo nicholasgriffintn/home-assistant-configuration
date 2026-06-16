@@ -1,5 +1,7 @@
 dog_bark:
   sequence:
+    - condition: template
+      value_template: "{{ not is_state('media_player.home_assistant_voice_093870_media_player', 'unavailable') }}"
     - wait_template: >-
         {{ not is_state('media_player.home_assistant_voice_093870_media_player', 'playing') }}
       timeout: 00:01:30

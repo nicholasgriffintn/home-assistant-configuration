@@ -13,3 +13,28 @@ sensor:
       Your home's temperature is {{ states('sensor.weather_station_temperature') }}°C. Humidity is {{states('sensor.weather_station_humidity')}}%.
 
       The outside temperature is {{states('sensor.openweathermap_temperature')}}°C, and humidity is {{states('sensor.openweathermap_humidity')}}%.
+
+  - name: "Morning Announcement"
+    unique_id: 4f0995fa-df09-41c6-a742-8b630ee6ba9a
+    state: >-
+      Inside {{ states('sensor.weather_station_temperature') }}C,
+      {{ states('sensor.weather_station_humidity') }}% humidity.
+      Outside {{ states('sensor.openweathermap_temperature') }}C,
+      {{ states('sensor.openweathermap_condition') }}.
+      CO2 {{ states('sensor.weather_station_carbon_dioxide') }} ppm.
+      Plants to water: {{ states('sensor.plants_to_water') }}.
+      Piccadilly: {{ states('sensor.london_underground_piccadilly') }}.
+    attributes:
+      plants_to_water: "{{ states('sensor.plants_to_water') }}"
+      plants_to_fertilise: "{{ states('sensor.plants_to_fertilize') }}"
+      inside_temperature: "{{ states('sensor.weather_station_temperature') }}"
+      inside_humidity: "{{ states('sensor.weather_station_humidity') }}"
+      carbon_dioxide: "{{ states('sensor.weather_station_carbon_dioxide') }}"
+      outside_temperature: "{{ states('sensor.openweathermap_temperature') }}"
+      outside_condition: "{{ states('sensor.openweathermap_condition') }}"
+      wind_speed: "{{ states('sensor.openweathermap_wind_speed') }}"
+      tube_central: "{{ states('sensor.london_underground_central') }}"
+      tube_circle: "{{ states('sensor.london_underground_circle') }}"
+      tube_elizabeth: "{{ states('sensor.london_underground_elizabeth_line') }}"
+      tube_hammersmith_city: "{{ states('sensor.london_underground_hammersmith_city') }}"
+      tube_piccadilly: "{{ states('sensor.london_underground_piccadilly') }}"

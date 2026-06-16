@@ -19,3 +19,6 @@ at_work:
 send_guard_dog:
   name: Send Guard Dog
   initial: false
+air_quality_boost:
+  name: Air Quality Boost
+  initial: false

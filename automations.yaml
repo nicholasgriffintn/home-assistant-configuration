@@ -75,11 +75,9 @@
     before: 09:00:00
   action:
   - if:
-    - type: is_not_open
-      condition: device
-      device_id: b59607a56734120d2196a0030b539ce0
-      entity_id: binary_sensor.back_door
-      domain: binary_sensor
+    - condition: state
+      entity_id: binary_sensor.front_door_2
+      state: 'off'
     then:
     - device_id: a7fe10c4353ad14df685757cd9b4c2a3
       domain: alarm_control_panel
@@ -87,11 +85,9 @@
       type: arm_home
     else:
     - wait_for_trigger:
-      - type: not_opened
-        platform: device
-        device_id: b59607a56734120d2196a0030b539ce0
-        entity_id: binary_sensor.back_door
-        domain: binary_sensor
+      - platform: state
+        entity_id: binary_sensor.front_door_2
+        to: 'off'
         for:
           hours: 0
           minutes: 0
@@ -304,15 +300,17 @@
   alias: Notify Me About The Bin
   description: ''
   trigger:
-  - platform: calendar
-    event: start
-    entity_id: calendar.garbage_collection
-  condition: []
+  - platform: time
+    at: '19:00:00'
+  condition:
+  - condition: time
+    weekday:
+    - sun
   action:
   - service: script.text_notification
     data:
       title: Garbage Collection Reminder
-      value1: It is time to take the bin out.
+      value1: It is Sunday evening, so take the bin out.
       value2: Please ensure it is ready for collection.
   mode: single
 - id: '1653179156634'
@@ -735,4 +733,311 @@
     data: {}
     target:
       entity_id: update.home_assistant_operating_system_update
+  mode: single
+- id: daily_plant_watering_reminder
+  alias: Daily plant watering reminder
+  description: Remind me when Simple Plant says anything needs watering.
+  trigger:
+  - platform: time
+    at: '09:30:00'
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.plants_to_water
+    above: 0
+  - condition: state
+    entity_id: alarm_control_panel.london_alarm
+    state: disarmed
+  action:
+  - service: script.text_notification
+    data:
+      title: Plants need water
+      value1: >-
+        {{ states('sensor.plants_to_water') }} plant{{ 's' if
+        states('sensor.plants_to_water') | int(0) != 1 else '' }} need water:
+        {% set due = namespace(names=[]) %}
+        {% if is_state('binary_sensor.simple_plant_todo_spike', 'on') %}
+          {% set due.names = due.names + ['Spike'] %}
+        {% endif %}
+        {% if is_state('binary_sensor.simple_plant_todo_susie', 'on') %}
+          {% set due.names = due.names + ['Susie'] %}
+        {% endif %}
+        {% if is_state('binary_sensor.simple_plant_todo_wallace', 'on') %}
+          {% set due.names = due.names + ['Wallace'] %}
+        {% endif %}
+        {{ due.names | join(', ') }}
+      group: plants
+  mode: single
+- id: daily_watch_battery_reminder
+  alias: Daily watch battery reminder
+  description: Remind me in the morning if the watch is nearly flat.
+  trigger:
+  - platform: time
+    at: 08:30:00
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.ng_iphone_watch_battery_level
+    below: 15
+  action:
+  - service: script.text_notification
+    data:
+      title: Watch battery low
+      value1: >-
+        Your watch is at {{ states('sensor.ng_iphone_watch_battery_level') }}%.
+      group: devices
+  mode: single
+- id: high_indoor_co2_alert
+  alias: High indoor CO2 alert
+  description: Tell me when the living space needs fresh air.
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.weather_station_carbon_dioxide
+    above: 1200
+    for:
+      minutes: 20
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.london_alarm
+    state: disarmed
+  action:
+  - service: script.text_notification
+    data:
+      title: Open a window
+      value1: >-
+        Indoor CO2 has been around {{ states('sensor.weather_station_carbon_dioxide') }}
+        ppm for 20 minutes.
+      group: air-quality
+      level: time-sensitive
+  mode: single
+- id: commute_tube_disruption_alert
+  alias: Commute Tube disruption alert
+  description: Flag useful Underground disruptions during commute windows.
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.london_underground_central
+    - sensor.london_underground_circle
+    - sensor.london_underground_elizabeth_line
+    - sensor.london_underground_hammersmith_city
+  condition:
+  - condition: template
+    value_template: "{{ trigger.to_state.state not in ['Good Service', 'unknown', 'unavailable'] }}"
+  - condition: or
+    conditions:
+    - condition: time
+      after: 07:00:00
+      before: '10:00:00'
+      weekday:
+      - thu
+    - condition: time
+      after: '16:30:00'
+      before: '19:30:00'
+      weekday:
+      - thu
+  action:
+  - service: script.text_notification
+    data:
+      title: Tube disruption
+      value1: >-
+        {{ trigger.to_state.attributes.friendly_name | replace('London Underground ', '') }}:
+        {{ trigger.to_state.state }}.
+      group: commute
+      level: time-sensitive
+  mode: queued
+- id: reset_daily_mode_toggles
+  alias: Reset daily mode toggles
+  description: Clear scene-style helper toggles every morning.
+  trigger:
+  - platform: time
+    at: 07:00:00
+  action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id:
+      - input_boolean.wind_down
+      - input_boolean.bedtime
+      - input_boolean.good_night
+      - input_boolean.watching_tv
+      - input_boolean.send_guard_dog
+  mode: single
+- id: air_quality_boost_on
+  alias: Air quality boost on
+  description: Boost the fan when CO2 stays high while someone is home.
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.weather_station_carbon_dioxide
+    above: 1400
+    for:
+      minutes: 10
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.london_alarm
+    state: disarmed
+  - condition: state
+    entity_id: input_boolean.air_quality_boost
+    state: 'off'
+  action:
+  - service: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.air_quality_boost
+  - service: fan.turn_on
+    target:
+      entity_id: fan.air_circulator
+  - service: fan.set_percentage
+    target:
+      entity_id: fan.air_circulator
+    data:
+      percentage: 60
+  - service: script.text_notification
+    data:
+      title: Air quality boost started
+      value1: >-
+        CO2 is {{ states('sensor.weather_station_carbon_dioxide') }} ppm, so the fan is running at 60%.
+      group: air-quality
+  mode: single
+- id: air_quality_boost_off
+  alias: Air quality boost off
+  description: Stop only the fan boost that Home Assistant started.
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.weather_station_carbon_dioxide
+    below: 900
+    for:
+      minutes: 20
+  condition:
+  - condition: state
+    entity_id: input_boolean.air_quality_boost
+    state: 'on'
+  action:
+  - service: fan.turn_off
+    target:
+      entity_id: fan.air_circulator
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.air_quality_boost
+  - service: script.text_notification
+    data:
+      title: Air quality back to normal
+      value1: >-
+        CO2 is back down to {{ states('sensor.weather_station_carbon_dioxide') }} ppm, so the fan boost has stopped.
+      group: air-quality
+  mode: single
+- id: good_night_routine
+  alias: Good Night routine
+  description: Turn the house down, set bedtime mode, and arm home if the front door is shut.
+  trigger:
+  - platform: state
+    entity_id: input_boolean.good_night
+    from: 'off'
+    to: 'on'
+  action:
+  - service: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.bedtime
+  - service: light.turn_off
+    target:
+      entity_id:
+      - light.living_room
+      - light.sideboard_lights
+      - light.tv_strip
+      - light.hallway
+      - light.entrance
+  - service: light.turn_on
+    target:
+      entity_id:
+      - light.bedroom
+      - light.wiz_rgbww_tunable_020656
+    data:
+      brightness_pct: 15
+      transition: 5
+  - if:
+    - condition: state
+      entity_id: alarm_control_panel.london_alarm
+      state: disarmed
+    - condition: state
+      entity_id: binary_sensor.front_door_2
+      state: 'off'
+    then:
+    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+      domain: alarm_control_panel
+      entity_id: alarm_control_panel.london_alarm
+      type: arm_home
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.good_night
+  mode: single
+- id: good_morning_routine
+  alias: Good Morning routine
+  description: Clear night modes and send the morning briefing.
+  trigger:
+  - platform: state
+    entity_id: input_boolean.good_morning
+    from: 'off'
+    to: 'on'
+  action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id:
+      - input_boolean.bedtime
+      - input_boolean.wind_down
+      - input_boolean.good_night
+  - service: light.turn_off
+    target:
+      entity_id:
+      - light.wiz_rgbww_tunable_020656
+  - parallel:
+    - service: script.text_notification
+      data:
+        title: Morning Briefing
+        value1: "{{ states('sensor.morning_announcement') }}"
+        group: briefing
+    - service: script.briefing_notification
+      data:
+        call_inside_weather: 1
+        call_garbage_day: 1
+        call_outside_weather: 1
+        call_light_check: 1
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.good_morning
+  mode: single
+- id: commute_morning_status
+  alias: Commute morning status
+  description: Send a weekday commute summary if useful Tube lines are disrupted.
+  trigger:
+  - platform: time
+    at: 07:45:00
+  condition:
+  - condition: time
+    weekday:
+    - thu
+  - condition: template
+    value_template: >-
+      {{ [
+        states('sensor.london_underground_central'),
+        states('sensor.london_underground_circle'),
+        states('sensor.london_underground_elizabeth_line'),
+        states('sensor.london_underground_hammersmith_city'),
+        states('sensor.london_underground_piccadilly')
+      ] | reject('eq', 'Good Service') | reject('eq', 'unknown') | reject('eq', 'unavailable') | list | count > 0 }}
+  action:
+  - service: script.text_notification
+    data:
+      title: Commute status
+      value1: >-
+        {% set lines = [
+          ('Central', states('sensor.london_underground_central')),
+          ('Circle', states('sensor.london_underground_circle')),
+          ('Elizabeth line', states('sensor.london_underground_elizabeth_line')),
+          ('Hammersmith & City', states('sensor.london_underground_hammersmith_city')),
+          ('Piccadilly', states('sensor.london_underground_piccadilly'))
+        ] %}
+        {% set disrupted = namespace(items=[]) %}
+        {% for line, status in lines %}
+          {% if status not in ['Good Service', 'unknown', 'unavailable'] %}
+            {% set disrupted.items = disrupted.items + [line ~ ': ' ~ status] %}
+          {% endif %}
+        {% endfor %}
+        {{ disrupted.items | join('; ') }}
+      group: commute
+      level: time-sensitive
   mode: single

@@ -1,20 +1,21 @@
 text_notification:
+  mode: queued
   sequence:
-    - condition: or
-      conditions:
-        - condition: state
-          entity_id: input_boolean.text_notifications
-          state: 'on'
+    - condition: state
+      entity_id: input_boolean.text_notifications
+      state: 'on'
 
     - service: >
-        {% if who == 'me' %}
+        {% if who | default('me') == 'me' %}
           notify.mobile_app_ng_iphone
         {% else %}
           notify.mobile_app_ng_iphone
         {% endif %}
       data:
-        title: '{{ title }}'
-        message: '{{ value1 }} {{ value2 }} {{ value3 }}'
+        title: "{{ title | default('Home Assistant') }}"
+        message: >-
+          {{ [value1 | default(''), value2 | default(''), value3 | default('')]
+          | reject('eq', '') | join(' ') }}
         data:
           group: "{{ group|default('information') }}"
           push:
@@ -36,6 +37,7 @@ briefing_notification:
     - service: script.trigger_speech
       data:
         media_player: >-
+          {% set media_player = media_player | default([], true) %}
           {% if media_player | length == 0 %}
             {% set media_player = [
               'media_player.home_assistant_voice_093870_media_player'
