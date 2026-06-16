@@ -394,6 +394,8 @@
   - service: script.dog_bark
   - delay:
       minutes: 10
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.send_guard_dog
 - alias: Watching TV
   id: watching_tv
   trigger:
@@ -458,7 +460,7 @@
     domain: light
     brightness_pct: 60
   - wait_for_trigger:
-    - entity_id: binary_sensor.living_room
+    - entity_id: binary_sensor.hallway
       to: 'off'
       for:
         hours: 0
@@ -532,7 +534,7 @@
       domain: switch
   mode: single
 - id: '1754829748795'
-  alias: New automation
+  alias: Turn off diffuser afternoon
   description: ''
   triggers:
   - trigger: time
@@ -580,7 +582,7 @@
       domain: switch
   mode: single
 - id: '1754829911996'
-  alias: New automation
+  alias: Turn off diffuser evening
   description: ''
   triggers:
   - trigger: time

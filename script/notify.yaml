@@ -17,7 +17,8 @@ text_notification:
         message: '{{ value1 }} {{ value2 }} {{ value3 }}'
         data:
           group: "{{ group|default('information') }}"
-          interuption_level: "{{ level|default('active') }}"
+          push:
+            interruption-level: "{{ level|default('active') }}"
           entity_id: "{{ camera_entity|default('', true) }}"
 
 briefing_notification:

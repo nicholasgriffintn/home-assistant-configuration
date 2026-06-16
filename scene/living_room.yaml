@@ -1,7 +1,7 @@
 - name: Watching TV
   id: lr_watching_tv
   entities:
-    light.living_room_ceiling:
+    light.living_room:
       state: on
       brightness: 15
     light.wiz_rgbww_tunable_0368da:

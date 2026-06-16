@@ -38,14 +38,14 @@
   {%- endmacro -%}
 
   {%- macro moon() -%}
-        {% if (now().hour == 17) %}
+        {% if (now().hour == 17) and has_value('sensor.moon') %}
         Current Moon phase: {{ states('sensor.moon') }} [Give a fact and mention today's phase]
         {% endif %}
   {%- endmacro -%}
 
   {%- macro uv() -%}
-  {% if states.sensor.openweathermap_uv_index.state|int(9999)>= 6 %}
-      Today's UV index is {{ states.sensor.openweathermap_uv_index.state }}. 
+  {% if states('sensor.openweathermap_uv_index')|int(9999)>= 6 %}
+      Today's UV index is {{ states('sensor.openweathermap_uv_index') }}.
     {%- for entity in states.sensor if 'openweathermap' in entity.entity_id %}
         {%- set state = entity.state %}
         {%- set unit = entity.attributes.unit_of_measurement if 'unit_of_measurement' in entity.attributes else '' %}
@@ -55,7 +55,7 @@
             {{ friendly_name }}: {{ state }} {{ unit }}
         {%- elif 'Feels like temperature' in friendly_name -%}
             {{ friendly_name }}: {{ state }} {{ unit }}
-        {%- elif 'Cloud Ccverage' in friendly_name and state | float > 75 -%}
+        {%- elif 'Cloud coverage' in friendly_name and state | float > 75 -%}
             {{ friendly_name }}: {{ state }} {{ unit }}
         {%- elif 'Humidity' in friendly_name and (state | float < 50 or state | float > 85) -%}
             {{ friendly_name }}: {{ state }} {{ unit }}
@@ -87,14 +87,9 @@
   {%- endmacro -%}
 
   {%- macro light_check() -%}
-  {% if states.group.all_lights.state != 'off' -%}
-      There are
-  {% for state in states.light if state.state == 'on' -%}
-      {%- if loop.last -%}
-      {{ loop.index }}
-      {%- endif -%}
-  {%- endfor %}
-  lights on right now.
+  {% set lights_on = states.light | selectattr('state', 'eq', 'on') | list %}
+  {% if lights_on | count > 0 -%}
+      There are {{ lights_on | count }} lights on right now.
   {% endif -%}
   {%- endmacro -%}
 

@@ -11,15 +11,15 @@ sensor:
     scan_interval: 14400
     value_template: >
       {% set today = now().strftime('%Y-%m-%d') %}
-      {% set holiday = "" %}
+      {% set holiday = namespace(title='') %}
       {% if value_json is defined and value_json['england-and-wales'] is defined %}
         {% for event in value_json['england-and-wales'].events %}
           {% if event.date == today %}
-            {% set holiday = event.title %}
+            {% set holiday.title = event.title %}
           {% endif %}
         {% endfor %}
       {% endif %}
-      {{ holiday }}
+      {{ holiday.title }}
 
   - platform: rest
     name: UK Bank Holidays

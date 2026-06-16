@@ -1,9 +1,0 @@
-[2026-06-16 20:09:18] pwd
-[2026-06-16 20:09:18] ls
-[2026-06-16 20:09:18] rg --files
-[2026-06-16 20:09:29] sed -n '1,220p' configuration.yaml
-[2026-06-16 20:09:29] sed -n '1,220p' automations.yaml
-[2026-06-16 20:09:29] sed -n '1,220p' light/light_groups.yaml
-[2026-06-16 20:09:29] sed -n '1,220p' input_boolean/home_modes.yaml
-[2026-06-16 20:09:29] sed -n '1,220p' light-groups/light-groups.yaaml
-[2026-06-16 20:09:29] sed -n '1,220p' input_boolean/iphone.yaml

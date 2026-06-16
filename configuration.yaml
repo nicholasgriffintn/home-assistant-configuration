@@ -30,13 +30,14 @@ alexa:
       - camera
 
 http:
-  ip_ban_enabled: false
+  ip_ban_enabled: true
   login_attempts_threshold: 3
   use_x_forwarded_for: true
   trusted_proxies:
     - 172.30.33.0/24
     - 192.168.4.0/24
     - 10.0.0.0/24
+    - 10.0.0.21/24
 
 logbook: !include logbook.yaml
 logger: !include logger.yaml
@@ -59,20 +60,13 @@ zone:
     radius: 200
     icon: mdi:briefcase
 
-sensor:
-  - platform: london_underground
-    line:
-      - Elizabeth line
-      - Central
-      - Hammersmith & City
-      - Piccadilly
-      - Circle
+sensor: !include_dir_merge_list sensor
 
 script: !include_dir_merge_named script
 scene: !include_dir_merge_named scene
 template: !include_dir_merge_named template
 input_boolean: !include_dir_merge_named input_boolean
-light groups: !include_dir_merge_named light-groups
+light: !include_dir_merge_list light-groups
 
 automation ui: !include automations.yaml
 automation manual: !include_dir_merge_list automation
