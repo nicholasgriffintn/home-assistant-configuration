@@ -12,6 +12,7 @@
     domain: alarm_control_panel
     entity_id: alarm_control_panel.london_alarm
     type: arm_away
+  - service: script.music_stop_house
   mode: single
 - id: '1644172721979'
   alias: Disarm alarm when away mode is off
@@ -333,7 +334,7 @@
     data:
       text: 'Here is the morning announcement for today, please re-word this into
         something that makes me want to wake up, including the states: {{states(''sensor.morning_announcement'')}}'
-      agent_id: 01JS4DFR4SWX9W0RK7PDHRG1YH
+      agent_id: conversation.polychat_flash
     response_variable: agent
   - parallel:
     - service: script.text_notification
@@ -344,6 +345,13 @@
         group: briefing
         tag: morning-announcement
         message_limit: 180
+        actions:
+        - action: MUSIC_PLAY_RADIO_1
+          title: Radio 1
+          icon: sfsymbols:radio
+        - action: MORNING_READ_ALOUD
+          title: Read aloud
+          icon: sfsymbols:speaker.wave.2
     - service: script.briefing_notification
       data:
         call_inside_weather: 1
@@ -427,6 +435,7 @@
       entity_id: media_player.tv
       state: playing
   action:
+  - service: script.music_pause_house
   - service: input_boolean.turn_off
     entity_id: input_boolean.watching_tv
   - service: scene.turn_on
@@ -1057,6 +1066,9 @@
         tag: morning-briefing
         message_limit: 180
         actions:
+        - action: MUSIC_PLAY_RADIO_1
+          title: Radio 1
+          icon: sfsymbols:radio
         - action: MORNING_READ_ALOUD
           title: Read aloud
           icon: sfsymbols:speaker.wave.2
@@ -1072,6 +1084,7 @@
         call_garbage_day: 1
         call_outside_weather: 1
         call_light_check: 1
+    - service: script.music_play_morning_bbc_radio_1
   - service: input_boolean.turn_off
     target:
       entity_id: input_boolean.good_morning
@@ -1230,5 +1243,20 @@
       - service: input_boolean.turn_on
         target:
           entity_id: input_boolean.good_morning
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'MUSIC_PLAY_RADIO_1' }}"
+      sequence:
+      - service: script.music_play_morning_bbc_radio_1
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'MUSIC_PAUSE_HOUSE' }}"
+      sequence:
+      - service: script.music_pause_house
+    - conditions:
+      - condition: template
+        value_template: "{{ trigger.event.data.action == 'MUSIC_STOP_HOUSE' }}"
+      sequence:
+      - service: script.music_stop_house
   mode: parallel
   max: 10

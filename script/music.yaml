@@ -1,0 +1,82 @@
+music_play:
+  alias: "Music: Play media"
+  mode: queued
+  fields:
+    media_player:
+      name: Player
+      selector:
+        entity:
+          domain: media_player
+    media_id:
+      name: Media ID
+      selector:
+        text:
+    media_type:
+      name: Media type
+      selector:
+        select:
+          options:
+            - radio
+            - playlist
+            - album
+            - artist
+            - track
+    volume:
+      name: Volume
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.01
+  sequence:
+    - variables:
+        target_player: "{{ media_player | default('media_player.homepod', true) }}"
+        target_media_id: "{{ media_id | default('bbc_sounds://radio/bbc_radio_one', true) }}"
+        target_media_type: "{{ media_type | default('radio', true) }}"
+    - service: media_player.volume_set
+      target:
+        entity_id: "{{ target_player }}"
+      data:
+        volume_level: "{{ volume | default(0.28, true) }}"
+    - service: music_assistant.play_media
+      target:
+        entity_id: "{{ target_player }}"
+      data:
+        media_id: "{{ target_media_id }}"
+        media_type: "{{ target_media_type }}"
+        enqueue: replace
+
+music_play_morning_bbc_radio_1:
+  alias: "Music: Play BBC Radio 1"
+  mode: single
+  sequence:
+    - service: script.music_play
+      data:
+        media_player: media_player.bedroom
+        media_id: bbc_sounds://radio/bbc_radio_one
+        media_type: radio
+        volume: 0.28
+
+music_pause_house:
+  alias: "Music: Pause house"
+  mode: single
+  sequence:
+    - service: media_player.media_pause
+      target:
+        entity_id:
+          - media_player.homepod
+          - media_player.bedroom
+          - media_player.music_assistant
+          - media_player.music_assistant_2
+
+music_stop_house:
+  alias: "Music: Stop house"
+  mode: single
+  sequence:
+    - service: media_player.media_stop
+      target:
+        entity_id:
+          - media_player.homepod
+          - media_player.bedroom
+          - media_player.music_assistant
+          - media_player.music_assistant_2

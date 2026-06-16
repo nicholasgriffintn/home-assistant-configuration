@@ -49,17 +49,9 @@ trigger_speech:
             0.45
           {% endif %}
 
-    - service: conversation.process
-      data:
-        agent_id: 01JS4DFR4SWX9W0RK7PDHRG1YH
-        text: "{{ speech_message | default('') }}"
-      response_variable: agent
-
     - action: assist_satellite.announce
-      metadata: {}
       data:
-        message: >-
-          {{ agent.response.speech.plain.speech }}
+        message: "{{ speech_message | default('') }}"
         preannounce: true
       target:
         device_id: b2cd7d49f45144ddb35b315ebced9c2e
