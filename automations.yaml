@@ -1,6 +1,6 @@
 - id: '1644172665396'
-  alias: Arm alarm away when away mode is on
-  description: ''
+  alias: Away mode trigger
+  description: Arm away, stop music, and reset the helper.
   trigger:
   - platform: state
     entity_id: input_boolean.away_mode
@@ -8,30 +8,21 @@
     to: 'on'
   condition: []
   action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.home_mode
   - device_id: a7fe10c4353ad14df685757cd9b4c2a3
     domain: alarm_control_panel
     entity_id: alarm_control_panel.london_alarm
     type: arm_away
   - service: script.music_stop_house
-  mode: single
-- id: '1644172721979'
-  alias: Disarm alarm when away mode is off
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: input_boolean.away_mode
-    from: 'on'
-    to: 'off'
-  condition: []
-  action:
-  - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-    domain: alarm_control_panel
-    entity_id: alarm_control_panel.london_alarm
-    type: disarm
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.away_mode
   mode: single
 - id: '1644172973947'
-  alias: Arm alarm home when home mode is on
-  description: ''
+  alias: Home mode trigger
+  description: Arm home and reset the helper.
   trigger:
   - platform: state
     entity_id: input_boolean.home_mode
@@ -39,25 +30,41 @@
     to: 'on'
   condition: []
   action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.away_mode
   - device_id: a7fe10c4353ad14df685757cd9b4c2a3
     domain: alarm_control_panel
     entity_id: alarm_control_panel.london_alarm
     type: arm_home
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.home_mode
   mode: single
-- id: '1644173009664'
-  alias: Disarm alarm home when home mode is off
-  description: ''
+- id: sync_iphone_charging_helper
+  alias: Sync iPhone charging helper
+  description: Keep the iPhone charging helper aligned with the mobile app battery-state sensor.
   trigger:
   - platform: state
-    entity_id: input_boolean.home_mode
-    from: 'on'
-    to: 'off'
-  condition: []
+    entity_id: sensor.ng_iphone_battery_state
+  - platform: homeassistant
+    event: start
   action:
-  - device_id: a7fe10c4353ad14df685757cd9b4c2a3
-    domain: alarm_control_panel
-    entity_id: alarm_control_panel.london_alarm
-    type: disarm
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: "{{ states('sensor.ng_iphone_battery_state') | lower in ['charging', 'full'] }}"
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.iphone_charging
+    - conditions:
+      - condition: template
+        value_template: "{{ states('sensor.ng_iphone_battery_state') | lower in ['not charging', 'discharging', 'unplugged'] }}"
+      sequence:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.iphone_charging
   mode: single
 - id: '1644180357751'
   alias: Arm Home when iPhone is Plugged In
@@ -93,6 +100,9 @@
           hours: 0
           minutes: 0
           seconds: 15
+      timeout:
+        minutes: 10
+      continue_on_timeout: false
     - device_id: a7fe10c4353ad14df685757cd9b4c2a3
       domain: alarm_control_panel
       entity_id: alarm_control_panel.london_alarm
@@ -107,7 +117,13 @@
     - input_boolean.iphone_charging
     from: 'on'
     to: 'off'
-  condition: []
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.london_alarm
+    state: armed_home
+  - condition: time
+    after: 05:00:00
+    before: '10:30:00'
   action:
   - device_id: a7fe10c4353ad14df685757cd9b4c2a3
     domain: alarm_control_panel
@@ -315,8 +331,8 @@
       value2: Please ensure it is ready for collection.
   mode: single
 - id: '1653179156634'
-  alias: Morning Announcement
-  description: ''
+  alias: Good Morning when iPhone alarm is stopped
+  description: Run the morning routine when the iPhone alarm helper is triggered.
   triggers:
   - entity_id:
     - input_boolean.alarm_turned_off
@@ -329,36 +345,9 @@
       entity_id: input_boolean.alarm_turned_off
     data: {}
     action: input_boolean.turn_off
-  - action: conversation.process
-    metadata: {}
-    data:
-      text: 'Here is the morning announcement for today, please re-word this into
-        something that makes me want to wake up, including the states: {{states(''sensor.morning_announcement'')}}'
-      agent_id: conversation.polychat_flash
-    response_variable: agent
-  - parallel:
-    - service: script.text_notification
-      data:
-        title: Morning Announcement
-        subtitle: Wake-up summary
-        value1: '{{ agent.response.speech.plain.speech }}'
-        group: briefing
-        tag: morning-announcement
-        url: entityId:sensor.morning_announcement
-        message_limit: 180
-        is_critical: true
-        actions:
-        - action: MUSIC_PLAY_RADIO_1
-          title: Radio 1
-          icon: sfsymbols:radio
-        - action: MORNING_READ_ALOUD
-          title: Read aloud
-          icon: sfsymbols:speaker.wave.2
-    - service: script.briefing_notification
-      data:
-        call_inside_weather: 1
-        call_garbage_day: 1
-        call_outside_weather: 1
+  - service: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.good_morning
   mode: single
 - id: '1653179675148'
   alias: Send a camera snapshot when motion is detected
@@ -415,33 +404,59 @@
     entity_id: input_boolean.watching_tv
     to: 'on'
     from: 'off'
+    id: manual
   - platform: state
     entity_id: sun.sun
     to: below_horizon
     from: above_horizon
+    id: sunset
   - platform: state
     entity_id: media_player.tv
     to: playing
+    id: tv_playing
   condition:
-    condition: and
+  - condition: or
     conditions:
-    - condition: state
-      entity_id: sun.sun
-      state: below_horizon
-    - condition: state
-      entity_id: input_boolean.guest_mode_lm
-      state: 'off'
-    - condition: time
-      after: '18:00:00'
-    - condition: state
-      entity_id: media_player.tv
-      state: playing
+    - condition: trigger
+      id: manual
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: sun.sun
+        state: below_horizon
+      - condition: state
+        entity_id: input_boolean.guest_mode_lm
+        state: 'off'
+      - condition: time
+        after: '18:00:00'
+      - condition: state
+        entity_id: media_player.tv
+        state: playing
   action:
-  - service: script.music_pause_house
+  - if:
+    - condition: not
+      conditions:
+      - condition: trigger
+        id: manual
+    then:
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.watching_tv
   - service: input_boolean.turn_off
-    entity_id: input_boolean.watching_tv
+    target:
+      entity_id:
+      - input_boolean.wind_down
+      - input_boolean.bedtime
+      - input_boolean.good_morning
+      - input_boolean.good_night
+  - service: script.adaptive_lighting_scene_mode
+  - service: script.music_pause_house
   - service: scene.turn_on
-    entity_id: scene.lr_watching_tv
+    target:
+      entity_id: scene.lr_watching_tv
+    data:
+      transition: 3
+  mode: single
 - id: '1754751285398'
   alias: Turn on Entrance when there is motion
   description: ''
@@ -519,44 +534,28 @@
     entity_id: d67e3538d6641188f4b1e096b5424267
     domain: light
   mode: single
-- id: '1755202404657'
-  alias: Bedroom Adaptive Lighting Sleep Mode
-  description: ''
+- id: adaptive_lighting_sleep_mode_follows_bedtime
+  alias: Adaptive Lighting sleep mode follows bedtime
+  description: Keep Adaptive Lighting sleep mode aligned with the bedtime helper.
   triggers:
   - trigger: state
     entity_id:
     - input_boolean.bedtime
-    to: 'on'
-  conditions:
-  - condition: state
-    entity_id: input_boolean.guest_mode_lm
-    state: 'off'
+    - input_boolean.guest_mode_lm
   actions:
-  - parallel:
-    - type: turn_on
-      device_id: e150043d8079312103c07baa10ecfa64
-      entity_id: f4844ea50b55232d7817c9026b0b0727
-      domain: switch
-  mode: single
-- id: '1755202447986'
-  alias: Living Room Adaptive Lighting Sleep Mode
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - input_boolean.bedtime
-    to: 'on'
-  conditions:
-  - condition: state
-    entity_id: input_boolean.guest_mode_lm
-    state: 'off'
-  actions:
-  - parallel:
-    - type: turn_on
-      device_id: 4ce4cb2f51b03ef6c00a93b85353f413
-      entity_id: 7cc8e01b0256aed6d1550c191438ca8a
-      domain: switch
-  mode: single
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.bedtime
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.guest_mode_lm
+        state: 'off'
+      sequence:
+      - service: script.adaptive_lighting_sleep_mode
+    default:
+    - service: script.adaptive_lighting_day_mode
+  mode: restart
 - id: '1775527344212'
   alias: 'HA Core: Auto-update patch versions'
   description: ''
@@ -795,6 +794,7 @@
       - input_boolean.air_quality_snoozed
       - input_boolean.commute_alerts_muted_today
       - input_boolean.plant_reminder_snoozed
+  - service: script.adaptive_lighting_day_mode
   mode: single
 - id: air_quality_boost_on
   alias: Air quality boost on
@@ -871,6 +871,32 @@
       group: air-quality
       url: entityId:sensor.weather_station_carbon_dioxide
   mode: single
+- id: wind_down_routine
+  alias: Wind Down routine
+  description: Set low evening lighting and clear conflicting modes.
+  trigger:
+  - platform: state
+    entity_id: input_boolean.wind_down
+    from: 'off'
+    to: 'on'
+  action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id:
+      - input_boolean.bedtime
+      - input_boolean.good_morning
+      - input_boolean.good_night
+      - input_boolean.watching_tv
+  - service: script.adaptive_lighting_scene_mode
+  - service: scene.turn_on
+    target:
+      entity_id:
+      - scene.lr_wind_down
+      - scene.br_wind_down
+      - scene.hr_wind_down
+    data:
+      transition: 6
+  mode: single
 - id: good_night_routine
   alias: Good Night routine
   description: Turn the house down, set bedtime mode, and arm home if the front door is shut.
@@ -880,25 +906,30 @@
     from: 'off'
     to: 'on'
   action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id:
+      - input_boolean.good_morning
+      - input_boolean.wind_down
+      - input_boolean.watching_tv
   - service: input_boolean.turn_on
     target:
       entity_id: input_boolean.bedtime
-  - service: light.turn_off
+  - if:
+    - condition: state
+      entity_id: input_boolean.guest_mode_lm
+      state: 'off'
+    then:
+    - service: script.adaptive_lighting_sleep_mode
+  - service: script.music_stop_house
+  - service: scene.turn_on
     target:
       entity_id:
-      - light.living_room
-      - light.sideboard_lights
-      - light.tv_strip
-      - light.hallway
-      - light.entrance
-  - service: light.turn_on
-    target:
-      entity_id:
-      - light.bedroom
-      - light.wiz_rgbww_tunable_020656
+      - scene.lr_good_night
+      - scene.hr_good_night
+      - scene.br_good_night
     data:
-      brightness_pct: 15
-      transition: 5
+      transition: 8
   - if:
     - condition: state
       entity_id: alarm_control_panel.london_alarm
@@ -930,10 +961,16 @@
       - input_boolean.bedtime
       - input_boolean.wind_down
       - input_boolean.good_night
-  - service: light.turn_off
+      - input_boolean.watching_tv
+  - service: script.adaptive_lighting_day_mode
+  - service: scene.turn_on
     target:
       entity_id:
-      - light.wiz_rgbww_tunable_020656
+      - scene.lr_good_morning
+      - scene.hr_good_morning
+      - scene.br_good_morning
+    data:
+      transition: 8
   - parallel:
     - service: script.text_notification
       data:

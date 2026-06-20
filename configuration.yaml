@@ -62,7 +62,7 @@ zone:
 sensor: !include_dir_merge_list sensor
 
 script: !include_dir_merge_named script
-scene: !include_dir_merge_named scene
+scene: !include_dir_merge_list scene
 template: !include_dir_merge_named template
 input_boolean: !include_dir_merge_named input_boolean
 light: !include_dir_merge_list light-groups

@@ -38,8 +38,7 @@ sensor:
       tube_elizabeth: "{{ states('sensor.london_underground_elizabeth_line') }}"
       tube_hammersmith_city: "{{ states('sensor.london_underground_hammersmith_city') }}"
       tube_piccadilly: "{{ states('sensor.london_underground_piccadilly') }}"
-
-  - binary_sensor:
-      - name: "Core Travel Hours"
-        unique_id: 5caf0c5b-5e75-479a-8fb5-24dc168d1180
-        state: "{{ now().hour >= 8 and now().hour < 18 }}"
+binary_sensor:
+  - name: "Core Travel Hours"
+    unique_id: 5caf0c5b-5e75-479a-8fb5-24dc168d1180
+    state: "{{ now().hour >= 8 and now().hour < 18 }}"

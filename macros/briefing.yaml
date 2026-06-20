@@ -10,11 +10,11 @@
   {%- endmacro -%}
 
   {%- macro inside_weather() -%}
-     Inside the house, it is {{ states('sensor.weather_station_temperature') }} degrees with {{ states('sensor.weather_station_humidity') }} percent humidity. [Only mention humidity if it seems unusually high]
+    {% set humidity = states('sensor.weather_station_humidity') %}
+    Inside the house, it is {{ states('sensor.weather_station_temperature') }} degrees{% if humidity not in ['unknown', 'unavailable', 'none'] and (humidity | float < 35 or humidity | float > 65) %} with {{ humidity }} percent humidity{% endif %}.
   {%- endmacro -%}
 
   {% macro outside_weather() %}
-    [Here is the current weather outside]
     {%- for entity in states.sensor if 'openweathermap' in entity.entity_id %}
         {%- set state = entity.state %}
         {%- set unit = entity.attributes.unit_of_measurement if 'unit_of_measurement' in entity.attributes else '' %}
@@ -39,7 +39,7 @@
 
   {%- macro moon() -%}
         {% if (now().hour == 17) and has_value('sensor.moon') %}
-        Current Moon phase: {{ states('sensor.moon') }} [Give a fact and mention today's phase]
+        Current moon phase: {{ states('sensor.moon') }}.
         {% endif %}
   {%- endmacro -%}
 
@@ -62,13 +62,12 @@
         {%- endif -%}
         {%- endif %}
     {% endfor -%}
-      [Give helpful tip based on the current UV index and weather conditions]
   {% endif %}
   {%- endmacro -%}
 
   {%- macro holiday() -%}
   {% if states.sensor.holiday.state != '' %}
-      Today is {{ states.sensor.holiday.state }}. [Give an interesting fact or quote related to today]
+      Today is {{ states.sensor.holiday.state }}.
   {% endif %}
   {%- endmacro -%}
 
@@ -94,11 +93,9 @@
   {%- endmacro -%}
 
   {% macro inspirational_quote() %}
-        [Include an inspirational quote relevant to the day or situation at the end of the message"]
   {% endmacro %}
 
   {% macro fact_of_the_day() %}
-        [Include a relevant fact about something that happened in the past on this day at the end of the message]
   {% endmacro %}
 
   {%- macro cleanup(data) -%}

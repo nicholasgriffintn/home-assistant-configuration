@@ -130,7 +130,7 @@ views:
                 entity_id: input_boolean.good_night
           - type: custom:mushroom-template-card
             primary: Wind Down
-            secondary: "{{ 'On' if is_state('input_boolean.wind_down', 'on') else 'Adaptive lighting across the flat' }}"
+            secondary: "{{ 'On' if is_state('input_boolean.wind_down', 'on') else 'Warm evening scene across the flat' }}"
             icon: mdi:lightbulb-night
             icon_color: "{{ 'deep-orange' if is_state('input_boolean.wind_down', 'on') else 'disabled' }}"
             entity: input_boolean.wind_down
@@ -246,7 +246,7 @@ views:
               - entity: camera.living_room_live_view
                 motion_entity: binary_sensor.living_room
               - entity: camera.entrance_live_view
-                motion_entity: binary_sensor.entrance_motion
+                motion_entity: event.entrance_motion
       - type: grid
         cards:
           - type: heading

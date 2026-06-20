@@ -1,3 +1,36 @@
+- name: Bedroom Good Morning
+  id: br_good_morning
+  entities:
+    light.bedroom:
+      state: on
+      brightness: 135
+      color_temp_kelvin: 3800
+    light.wiz_rgbww_tunable_020656:
+      state: on
+      brightness: 105
+      color_temp_kelvin: 3400
+- name: Bedroom Wind Down
+  id: br_wind_down
+  entities:
+    light.bedroom:
+      state: on
+      brightness: 35
+      color_temp_kelvin: 2400
+    light.wiz_rgbww_tunable_020656:
+      state: on
+      brightness: 28
+      rgb_color: [255, 124, 55]
+- name: Bedroom Good Night
+  id: br_good_night
+  entities:
+    light.bedroom:
+      state: on
+      brightness: 18
+      color_temp_kelvin: 2200
+    light.wiz_rgbww_tunable_020656:
+      state: on
+      brightness: 12
+      rgb_color: [255, 92, 45]
 - name: Emergency
   id: br_emergency
   entities:
@@ -7,4 +40,4 @@
     light.wiz_rgbww_tunable_020656:
       state: on
       brightness: 100
-      rgb_color: [255, 0, 0] # Red color for emergency
+      rgb_color: [255, 0, 0]

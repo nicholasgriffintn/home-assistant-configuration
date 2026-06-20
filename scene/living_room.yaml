@@ -3,11 +3,66 @@
   entities:
     light.living_room:
       state: on
-      brightness: 15
+      brightness: 35
+      color_temp_kelvin: 2700
+    light.sideboard_lights:
+      state: on
+      brightness: 24
     light.wiz_rgbww_tunable_0368da:
       state: on
-      brightness: 50
-      rgb_color: [0, 105, 148] # Ocean blue color for watching TV
+      brightness: 42
+      rgb_color: [0, 105, 148]
+    light.tv_strip:
+      state: on
+      brightness: 28
+      rgb_color: [0, 105, 148]
+- name: Living Room Good Morning
+  id: lr_good_morning
+  entities:
+    light.living_room:
+      state: on
+      brightness: 165
+      color_temp_kelvin: 4200
+    light.sideboard_lights:
+      state: on
+      brightness: 110
+      color_temp_kelvin: 3500
+    light.wiz_rgbww_tunable_0368da:
+      state: on
+      brightness: 120
+      color_temp_kelvin: 3600
+    light.tv_strip:
+      state: off
+- name: Living Room Wind Down
+  id: lr_wind_down
+  entities:
+    light.living_room:
+      state: on
+      brightness: 55
+      color_temp_kelvin: 2400
+    light.sideboard_lights:
+      state: on
+      brightness: 45
+      color_temp_kelvin: 2200
+    light.wiz_rgbww_tunable_0368da:
+      state: on
+      brightness: 38
+      rgb_color: [255, 132, 54]
+    light.tv_strip:
+      state: on
+      brightness: 25
+      rgb_color: [255, 95, 64]
+- name: Living Room Good Night
+  id: lr_good_night
+  entities:
+    light.living_room:
+      state: off
+    light.sideboard_lights:
+      state: off
+    light.wiz_rgbww_tunable_0368da:
+      state: off
+    light.tv_strip:
+      state: off
 - name: Emergency
   id: lr_emergency
   entities:
@@ -17,4 +72,4 @@
     light.wiz_rgbww_tunable_0368da:
       state: on
       brightness: 100
-      rgb_color: [255, 0, 0] # Red color for emergency
+      rgb_color: [255, 0, 0]

@@ -1,3 +1,32 @@
+- name: Hallway Good Morning
+  id: hr_good_morning
+  entities:
+    light.hallway:
+      state: on
+      brightness: 120
+      color_temp_kelvin: 3800
+    light.entrance:
+      state: on
+      brightness: 110
+      color_temp_kelvin: 3600
+- name: Hallway Wind Down
+  id: hr_wind_down
+  entities:
+    light.hallway:
+      state: on
+      brightness: 32
+      color_temp_kelvin: 2300
+    light.entrance:
+      state: on
+      brightness: 28
+      color_temp_kelvin: 2300
+- name: Hallway Good Night
+  id: hr_good_night
+  entities:
+    light.hallway:
+      state: off
+    light.entrance:
+      state: off
 - name: Emergency
   id: hr_emergency
   entities:
