@@ -1,4 +1,4 @@
-- name: Hallway Good Morning
+- name: HR Good Morning
   id: hr_good_morning
   entities:
     light.hallway:
@@ -9,7 +9,7 @@
       state: on
       brightness: 110
       color_temp_kelvin: 3600
-- name: Hallway Wind Down
+- name: HR Wind Down
   id: hr_wind_down
   entities:
     light.hallway:
@@ -20,14 +20,14 @@
       state: on
       brightness: 28
       color_temp_kelvin: 2300
-- name: Hallway Good Night
+- name: HR Good Night
   id: hr_good_night
   entities:
     light.hallway:
       state: off
     light.entrance:
       state: off
-- name: Emergency
+- name: HR Emergency
   id: hr_emergency
   entities:
     light.home_assistant_voice_093870_led_ring:

@@ -1,4 +1,4 @@
-- name: Watching TV
+- name: LR Watching TV
   id: lr_watching_tv
   entities:
     light.living_room:
@@ -16,7 +16,7 @@
       state: on
       brightness: 28
       rgb_color: [0, 105, 148]
-- name: Living Room Good Morning
+- name: LR Good Morning
   id: lr_good_morning
   entities:
     light.living_room:
@@ -33,7 +33,7 @@
       color_temp_kelvin: 3600
     light.tv_strip:
       state: off
-- name: Living Room Wind Down
+- name: LR Wind Down
   id: lr_wind_down
   entities:
     light.living_room:
@@ -52,7 +52,7 @@
       state: on
       brightness: 25
       rgb_color: [255, 95, 64]
-- name: Living Room Good Night
+- name: LR Good Night
   id: lr_good_night
   entities:
     light.living_room:
@@ -63,7 +63,7 @@
       state: off
     light.tv_strip:
       state: off
-- name: Emergency
+- name: LR Emergency
   id: lr_emergency
   entities:
     light.home_assistant_voice_093870_led_ring:

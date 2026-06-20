@@ -1,4 +1,4 @@
-- name: Bedroom Good Morning
+- name: BR Good Morning
   id: br_good_morning
   entities:
     light.bedroom:
@@ -9,7 +9,7 @@
       state: on
       brightness: 105
       color_temp_kelvin: 3400
-- name: Bedroom Wind Down
+- name: BR Wind Down
   id: br_wind_down
   entities:
     light.bedroom:
@@ -20,7 +20,7 @@
       state: on
       brightness: 28
       rgb_color: [255, 124, 55]
-- name: Bedroom Good Night
+- name: BR Good Night
   id: br_good_night
   entities:
     light.bedroom:
@@ -31,7 +31,7 @@
       state: on
       brightness: 12
       rgb_color: [255, 92, 45]
-- name: Emergency
+- name: BR Emergency
   id: br_emergency
   entities:
     light.home_assistant_voice_093870_led_ring:
