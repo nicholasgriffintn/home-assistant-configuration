@@ -100,13 +100,6 @@ views:
             show_brightness_control: true
             show_color_temp_control: true
             show_color_control: true
-          - type: heading
-            icon: mdi:scent
-            heading_style: title
-            heading: Diffusers
-          - type: custom:mushroom-entity-card
-            entity: switch.diffuser_socket_1
-            name: Hallway Scent
       - type: grid
         cards:
           - type: heading
@@ -429,9 +422,6 @@ views:
             show_color_temp_control: true
             show_color_control: true
             use_light_color: true
-          - type: custom:mushroom-entity-card
-            entity: switch.diffuser_socket_1
-            name: Hallway Scent
           - type: custom:mushroom-entity-card
             entity: binary_sensor.front_door_2
             name: Front Door
