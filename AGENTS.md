@@ -57,7 +57,7 @@ Adaptive Lighting can override scene brightness and colour if it is active while
 - When adding a normal light control, include it anywhere comparable room lights already appear.
 - Main controls belong in `dashboards/home.yaml`.
 - Phone-first quick actions belong in `dashboards/mobile.yaml`.
-- Operational toggles, update status, and diagnostics belong in `dashboards/ops.yaml`.
+- Operational toggles, update status, and diagnostics belong in the Health view in `dashboards/home.yaml`.
 - Do not turn dashboards into documentation pages. They should expose controls and state.
 
 ## Mobile And Phone Helpers

@@ -85,10 +85,3 @@ lovelace:
       title: Mobile
       icon: mdi:cellphone
       show_in_sidebar: true
-    house-ops:
-      mode: yaml
-      filename: dashboards/ops.yaml
-      title: Ops
-      icon: mdi:server
-      show_in_sidebar: true
-      require_admin: true

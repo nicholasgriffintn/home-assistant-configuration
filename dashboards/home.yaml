@@ -244,6 +244,8 @@ views:
             recording_duration: 10
             show_capture_buttons: false
             focus_motion: true
+            camera_view: ""
+            thumb_position: "left"
             grid_options:
               columns: 12
               rows: 4
@@ -270,7 +272,7 @@ views:
               icon_color: light-blue
               tap_action:
                 action: navigate
-                navigation_path: /house-home/care
+                navigation_path: /house-home/health
           - type: conditional
             conditions:
               - condition: numeric_state
@@ -349,8 +351,30 @@ views:
         cards:
           - type: heading
             icon: mdi:sofa
-            heading: Living Room
+            heading: Living Room Lights
             heading_style: title
+          - type: custom:mushroom-template-card
+            primary: Watching TV
+            secondary: Living room scene
+            icon: mdi:television-play
+            icon_color: "{{ 'cyan' if is_state('input_boolean.watching_tv', 'on') else 'disabled' }}"
+            entity: input_boolean.watching_tv
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.watching_tv
+          - type: custom:mushroom-template-card
+            primary: Wind Down
+            secondary: Evening scene
+            icon: mdi:lightbulb-night
+            icon_color: "{{ 'deep-orange' if is_state('input_boolean.wind_down', 'on') else 'disabled' }}"
+            entity: input_boolean.wind_down
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.wind_down
           - type: custom:mushroom-light-card
             entity: light.living_room
             name: Ceiling
@@ -377,12 +401,89 @@ views:
             name: Sideboard
             show_brightness_control: true
             use_light_color: true
+          - type: custom:mushroom-entity-card
+            entity: switch.coffee_table
+            name: Coffee Table
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:multimedia
+            heading: Living Room Media & Security
+            heading_style: title
+          - type: custom:mushroom-media-player-card
+            entity: media_player.living_room
+            name: Living Room Speaker
+            use_media_info: true
+            show_volume_level: true
+          - type: custom:mushroom-media-player-card
+            entity: media_player.tv
+            name: TV
+            use_media_info: true
+            show_volume_level: true
+          - type: custom:mushroom-media-player-card
+            entity: media_player.homepod
+            name: HomePod
+            use_media_info: true
+            show_volume_level: true
+          - type: custom:mushroom-media-player-card
+            entity: media_player.xbox
+            name: Xbox
+            use_media_info: true
+          - type: custom:mushroom-entity-card
+            entity: camera.living_room_live_view
+            name: Camera
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.living_room
+            name: Motion
+          - type: custom:mushroom-entity-card
+            entity: switch.living_room_living_room_motion_detection
+            name: Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: siren.living_room_living_room_siren
+            name: Siren
+          - type: custom:mushroom-entity-card
+            entity: sensor.living_room_battery_2
+            name: Motion Battery
+          - type: custom:mushroom-entity-card
+            entity: sensor.living_room_info
+            name: Sensor Status
       - type: grid
         cards:
           - type: heading
             icon: mdi:bed-king
-            heading: Bedroom
+            heading: Bedroom Lights
             heading_style: title
+          - type: custom:mushroom-template-card
+            primary: Good Morning
+            secondary: Bedroom wake scene
+            icon: mdi:weather-sunset-up
+            icon_color: amber
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.good_morning
+          - type: custom:mushroom-template-card
+            primary: Wind Down
+            secondary: Evening scene
+            icon: mdi:lightbulb-night
+            icon_color: "{{ 'deep-orange' if is_state('input_boolean.wind_down', 'on') else 'disabled' }}"
+            entity: input_boolean.wind_down
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.wind_down
+          - type: custom:mushroom-template-card
+            primary: Good Night
+            secondary: Bedtime scene
+            icon: mdi:weather-night
+            icon_color: indigo
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.good_night
           - type: custom:mushroom-light-card
             entity: light.bedroom
             show_brightness_control: true
@@ -396,18 +497,85 @@ views:
             show_color_temp_control: true
             show_color_control: true
             use_light_color: true
+          - type: custom:mushroom-light-card
+            entity: light.ledzha_deng
+            name: Lava Lamp
+            show_brightness_control: true
+            show_color_temp_control: true
+            show_color_control: true
+            use_light_color: true
           - type: custom:mushroom-entity-card
             entity: binary_sensor.bedroom
             name: Motion
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.bedroom_motion
+            name: Camera Motion
           - type: custom:mushroom-entity-card
             entity: sensor.bedroom_battery_2
             name: Motion Battery
       - type: grid
         cards:
           - type: heading
-            icon: mdi:door
-            heading: Hallway & Entrance
+            icon: mdi:cctv
+            heading: Bedroom Camera & Media
             heading_style: title
+          - type: custom:mushroom-media-player-card
+            entity: media_player.bedroom
+            name: Bedroom Speaker
+            use_media_info: true
+            show_volume_level: true
+          - type: custom:mushroom-media-player-card
+            entity: media_player.bedroom_2
+            name: Apple TV
+            use_media_info: true
+          - type: custom:mushroom-entity-card
+            entity: camera.bedroom_snapshot
+            name: Camera
+          - type: custom:mushroom-entity-card
+            entity: switch.bedroom_live_stream
+            name: Live Stream
+          - type: custom:mushroom-entity-card
+            entity: switch.bedroom_motion_detection_2
+            name: Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: switch.bedroom_motion_warning
+            name: Motion Warning
+          - type: custom:mushroom-entity-card
+            entity: switch.bedroom_siren
+            name: Siren
+          - type: custom:mushroom-entity-card
+            entity: sensor.bedroom_wireless
+            name: Wireless
+          - type: custom:mushroom-entity-card
+            entity: sensor.bedroom_info
+            name: Sensor Status
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:door
+            heading: Hallway & Entrance Lights
+            heading_style: title
+          - type: custom:mushroom-template-card
+            primary: Wind Down
+            secondary: Hallway scene
+            icon: mdi:lightbulb-night
+            icon_color: "{{ 'deep-orange' if is_state('input_boolean.wind_down', 'on') else 'disabled' }}"
+            entity: input_boolean.wind_down
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.wind_down
+          - type: custom:mushroom-template-card
+            primary: Good Night
+            secondary: Turn hallway and entrance off
+            icon: mdi:weather-night
+            icon_color: indigo
+            tap_action:
+              action: perform-action
+              perform_action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.good_night
           - type: custom:mushroom-light-card
             entity: light.entrance
             show_brightness_control: true
@@ -420,19 +588,57 @@ views:
             show_color_temp_control: true
             show_color_control: true
             use_light_color: true
-          - type: custom:mushroom-light-card
-            entity: light.ledzha_deng
-            name: Lava Lamp
-            show_brightness_control: true
-            show_color_temp_control: true
-            show_color_control: true
-            use_light_color: true
           - type: custom:mushroom-entity-card
             entity: binary_sensor.front_door_2
             name: Front Door
+          - type: custom:mushroom-entity-card
+            entity: sensor.front_door_battery_2
+            name: Front Door Battery
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.hallway
+            name: Hallway Motion
+          - type: custom:mushroom-entity-card
+            entity: sensor.hallway_battery
+            name: Hallway Battery
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:cctv
+            heading: Hallway & Entrance Security
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: camera.entrance_live_view
+            name: Entrance Camera
+          - type: custom:mushroom-entity-card
+            entity: event.entrance_motion
+            name: Entrance Motion
+          - type: custom:mushroom-entity-card
+            entity: switch.entrance_motion_detection
+            name: Entrance Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: sensor.entrance_battery
+            name: Entrance Battery
+          - type: custom:mushroom-entity-card
+            entity: camera.hallway_camera_snapshot
+            name: Hallway Camera
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.hallway_camera_motion
+            name: Hallway Camera Motion
+          - type: custom:mushroom-entity-card
+            entity: switch.hallway_camera_motion_detection
+            name: Hallway Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: switch.hallway_camera_live_stream
+            name: Hallway Live Stream
+          - type: custom:mushroom-entity-card
+            entity: switch.hallway_camera_siren
+            name: Hallway Siren
+          - type: custom:mushroom-entity-card
+            entity: sensor.hallway_camera_wireless
+            name: Hallway Wireless
 
-  - title: Care
-    path: care
+  - title: Health
+    path: health
     icon: mdi:heart-pulse
     type: sections
     max_columns: 3
@@ -517,3 +723,200 @@ views:
           - type: custom:mushroom-entity-card
             entity: sensor.fan_volatile_organic_compounds_index
             name: VOC Index
+          - type: custom:mushroom-entity-card
+            entity: sensor.fan_pm_10
+            name: PM10
+          - type: custom:mushroom-entity-card
+            entity: sensor.fan_filter_life
+            name: Filter Life
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:backup-restore
+            heading: Home Assistant
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: sensor.backup_backup_manager_state
+            name: Backup State
+          - type: custom:mushroom-entity-card
+            entity: sensor.backup_last_successful_automatic_backup
+            name: Last Backup
+          - type: custom:mushroom-entity-card
+            entity: sensor.backup_next_scheduled_automatic_backup
+            name: Next Backup
+          - type: custom:mushroom-entity-card
+            entity: update.home_assistant_core_update
+            name: Core Update
+          - type: custom:mushroom-entity-card
+            entity: update.home_assistant_operating_system_update
+            name: OS Update
+          - type: custom:mushroom-entity-card
+            entity: update.home_assistant_supervisor_update
+            name: Supervisor Update
+          - type: custom:mushroom-entity-card
+            entity: update.hacs_update
+            name: HACS Update
+          - type: custom:mushroom-entity-card
+            entity: update.adaptive_lighting_update
+            name: Adaptive Lighting Update
+          - type: custom:mushroom-entity-card
+            entity: update.music_assistant_server_update
+            name: Music Assistant Update
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:alert
+            heading: Problem States
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.rpi_power_status
+            name: Pi Power
+          - type: custom:mushroom-entity-card
+            entity: sensor.living_room_info
+            name: Living Room Sensor
+          - type: custom:mushroom-entity-card
+            entity: sensor.hallway_info
+            name: Hallway Sensor
+          - type: custom:mushroom-entity-card
+            entity: sensor.bedroom_info
+            name: Bedroom Sensor
+          - type: custom:mushroom-entity-card
+            entity: sensor.entryway_keypad_info
+            name: Entryway Keypad
+          - type: custom:mushroom-entity-card
+            entity: sensor.london_range_extender_info
+            name: Alarm Range Extender
+          - type: custom:mushroom-entity-card
+            entity: sensor.weather_station_reachability
+            name: Weather Station Reachability
+          - type: custom:mushroom-entity-card
+            entity: sensor.weather_station_outdoor_module_reachability
+            name: Outdoor Module Reachability
+          - type: custom:mushroom-entity-card
+            entity: sensor.bedroom_wireless
+            name: Bedroom Camera Wireless
+          - type: custom:mushroom-entity-card
+            entity: sensor.hallway_camera_wireless
+            name: Hallway Camera Wireless
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:battery-heart
+            heading: Batteries
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: sensor.ng_iphone_battery_level
+            name: iPhone
+          - type: custom:mushroom-entity-card
+            entity: sensor.ng_iphone_watch_battery_level
+            name: Watch
+          - type: custom:mushroom-entity-card
+            entity: sensor.front_door_battery_2
+            name: Front Door
+          - type: custom:mushroom-entity-card
+            entity: sensor.glass_break_sensor_battery
+            name: Glass Break
+          - type: custom:mushroom-entity-card
+            entity: sensor.weather_station_outdoor_module_battery
+            name: Outdoor Module
+          - type: custom:mushroom-entity-card
+            entity: sensor.london_range_extender_battery
+            name: Alarm Range Extender
+          - type: custom:mushroom-entity-card
+            entity: sensor.entryway_keypad_battery
+            name: Entryway Keypad
+          - type: custom:mushroom-entity-card
+            entity: sensor.living_room_battery_2
+            name: Living Room Motion
+          - type: custom:mushroom-entity-card
+            entity: sensor.bedroom_battery_2
+            name: Bedroom Motion
+          - type: custom:mushroom-entity-card
+            entity: sensor.hallway_battery
+            name: Hallway Motion
+          - type: custom:mushroom-entity-card
+            entity: sensor.entrance_battery
+            name: Entrance
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:theme-light-dark
+            heading: Adaptive Lighting
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_living_room_adaptive_lighting
+            name: Living Room
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_bedroom_adaptive_lighting
+            name: Bedroom
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_sleep_mode_living_room_adaptive_lighting
+            name: Living Room Sleep
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_sleep_mode_bedroom_adaptive_lighting
+            name: Bedroom Sleep
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_adapt_color_living_room_adaptive_lighting
+            name: Living Room Colour
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_adapt_brightness_living_room_adaptive_lighting
+            name: Living Room Brightness
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_adapt_color_bedroom_adaptive_lighting
+            name: Bedroom Colour
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_adapt_brightness_bedroom_adaptive_lighting
+            name: Bedroom Brightness
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:cctv
+            heading: Cameras & Alarm
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: switch.bedroom_motion_detection_2
+            name: Bedroom Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: switch.hallway_camera_motion_detection
+            name: Hallway Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: switch.entrance_motion_detection
+            name: Entrance Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: switch.bedroom_live_stream
+            name: Bedroom Live Stream
+          - type: custom:mushroom-entity-card
+            entity: switch.hallway_camera_live_stream
+            name: Hallway Live Stream
+          - type: custom:mushroom-entity-card
+            entity: switch.london_alarm_siren
+            name: Alarm Siren
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:network
+            heading: Network
+            heading_style: title
+          - type: custom:mini-graph-card
+            name: Cloudflare Speed Test
+            entities:
+              - entity: sensor.cloudflare_speed_test_90th_percentile_down
+                name: Down
+              - entity: sensor.cloudflare_speed_test_90th_percentile_up
+                name: Up
+              - entity: sensor.cloudflare_speed_test_latency
+                name: Latency
+          - type: custom:mushroom-entity-card
+            entity: sensor.cloudflare_speed_test_ip_address
+            name: IP Address
+          - type: custom:mushroom-entity-card
+            entity: sensor.cloudflare_speed_test_isp
+            name: ISP
+          - type: custom:mushroom-entity-card
+            entity: sensor.cloudflare_speed_test_latency
+            name: Latency
+          - type: custom:mushroom-entity-card
+            entity: sensor.cloudflare_speed_test_jitter
+            name: Jitter
+          - type: custom:pi-hole
+            device_id: b557adeb68087a2043f78e481dba466a
