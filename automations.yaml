@@ -897,6 +897,35 @@
     data:
       transition: 6
   mode: single
+- id: scene_mode_toggle_off
+  alias: Scene mode toggle off
+  description: Restore Adaptive Lighting when the persistent scene modes are cleared manually.
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.wind_down
+    - input_boolean.watching_tv
+    from: 'on'
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: input_boolean.bedtime
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.good_morning
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.good_night
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.wind_down
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.watching_tv
+    state: 'off'
+  action:
+  - service: script.adaptive_lighting_day_mode
+  mode: restart
 - id: good_night_routine
   alias: Good Night routine
   description: Turn the house down, set bedtime mode, and arm home if the front door is shut.

@@ -25,6 +25,10 @@ views:
                 entity: sensor.plants_to_water
               - type: entity
                 entity: media_player.bedroom
+              - type: entity
+                entity: input_boolean.iphone_charging
+              - type: entity
+                entity: sensor.ng_iphone_battery_level
       - type: grid
         cards:
           - type: heading
@@ -52,6 +56,30 @@ views:
               target:
                 entity_id: input_boolean.good_night
           - type: custom:mushroom-template-card
+            primary: Wind Down
+            secondary: Warm evening lighting
+            icon: mdi:lightbulb-night
+            icon_color: "{{ 'deep-orange' if is_state('input_boolean.wind_down', 'on') else 'disabled' }}"
+            entity: input_boolean.wind_down
+            tap_action:
+              action: toggle
+          - type: custom:mushroom-template-card
+            primary: Watching TV
+            secondary: Pause music and set TV lights
+            icon: mdi:television-play
+            icon_color: "{{ 'cyan' if is_state('input_boolean.watching_tv', 'on') else 'disabled' }}"
+            entity: input_boolean.watching_tv
+            tap_action:
+              action: toggle
+          - type: custom:mushroom-template-card
+            primary: Guest Mode
+            secondary: Suppress automatic ambience
+            icon: mdi:account-group
+            icon_color: "{{ 'green' if is_state('input_boolean.guest_mode_lm', 'on') else 'disabled' }}"
+            entity: input_boolean.guest_mode_lm
+            tap_action:
+              action: toggle
+          - type: custom:mushroom-template-card
             primary: Radio 1
             secondary: Bedroom Music Assistant
             icon: mdi:radio
@@ -67,6 +95,14 @@ views:
             tap_action:
               action: perform-action
               perform_action: script.music_pause_house
+          - type: custom:mushroom-template-card
+            primary: Stop House
+            secondary: Stop Music Assistant players
+            icon: mdi:stop-circle
+            icon_color: red
+            tap_action:
+              action: perform-action
+              perform_action: script.music_stop_house
       - type: grid
         cards:
           - type: heading
@@ -92,6 +128,32 @@ views:
             entity: fan.air_circulator
             show_percentage_control: true
             icon_animation: true
+          - type: custom:mushroom-template-card
+            primary: Air Boost
+            secondary: "{{ states('input_boolean.air_quality_boost') }}"
+            icon: mdi:fan-alert
+            icon_color: "{{ 'teal' if is_state('input_boolean.air_quality_boost', 'on') else 'disabled' }}"
+            entity: input_boolean.air_quality_boost
+            tap_action:
+              action: toggle
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:cellphone
+            heading: Phone
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: sensor.ng_iphone_battery_level
+            name: iPhone Battery
+          - type: custom:mushroom-entity-card
+            entity: sensor.ng_iphone_battery_state
+            name: iPhone Battery State
+          - type: custom:mushroom-entity-card
+            entity: input_boolean.iphone_charging
+            name: Charging Helper
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.ng_iphone_focus
+            name: Focus
       - type: grid
         cards:
           - type: heading
@@ -110,6 +172,28 @@ views:
             entity: sensor.ng_iphone_watch_battery_level
             name: Watch Battery
           - type: custom:mushroom-entity-card
+            entity: sensor.ng_iphone_watch_battery_state
+            name: Watch Battery State
+          - type: custom:mushroom-entity-card
             entity: sensor.plants_to_water
             name: Plants to Water
-
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:shield-home
+            heading: Security
+            heading_style: title
+          - type: custom:mushroom-alarm-control-panel-card
+            entity: alarm_control_panel.london_alarm
+            states:
+              - armed_home
+              - armed_away
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.front_door_2
+            name: Front Door
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.bedroom_motion
+            name: Bedroom Motion
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.hallway_camera_motion
+            name: Hallway Camera Motion

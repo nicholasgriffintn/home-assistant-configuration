@@ -26,6 +26,12 @@ views:
             entity: update.home_assistant_operating_system_update
           - type: custom:mushroom-entity-card
             entity: update.home_assistant_supervisor_update
+          - type: custom:mushroom-entity-card
+            entity: update.hacs_update
+          - type: custom:mushroom-entity-card
+            entity: update.adaptive_lighting_update
+          - type: custom:mushroom-entity-card
+            entity: update.music_assistant_server_update
           - type: heading
             icon: mdi:alert
             heading: Known Problem States
@@ -42,6 +48,15 @@ views:
           - type: custom:mushroom-entity-card
             entity: sensor.weather_station_reachability
             name: Weather Station Reachability
+          - type: custom:mushroom-entity-card
+            entity: sensor.weather_station_outdoor_module_reachability
+            name: Outdoor Module Reachability
+          - type: custom:mushroom-entity-card
+            entity: sensor.bedroom_wireless
+            name: Bedroom Camera Wireless
+          - type: custom:mushroom-entity-card
+            entity: sensor.hallway_camera_wireless
+            name: Hallway Camera Wireless
       - type: grid
         cards:
           - type: heading
@@ -66,6 +81,72 @@ views:
           - type: custom:mushroom-entity-card
             entity: sensor.london_range_extender_battery
             name: Alarm Range Extender
+          - type: custom:mushroom-entity-card
+            entity: sensor.entryway_keypad_battery
+            name: Entryway Keypad
+          - type: custom:mushroom-entity-card
+            entity: sensor.bedroom_battery_2
+            name: Bedroom Motion
+          - type: custom:mushroom-entity-card
+            entity: sensor.hallway_battery
+            name: Hallway Motion
+          - type: custom:mushroom-entity-card
+            entity: sensor.entrance_battery
+            name: Entrance
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:theme-light-dark
+            heading: Adaptive Lighting
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_living_room_adaptive_lighting
+            name: Living Room
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_bedroom_adaptive_lighting
+            name: Bedroom
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_sleep_mode_living_room_adaptive_lighting
+            name: Living Room Sleep
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_sleep_mode_bedroom_adaptive_lighting
+            name: Bedroom Sleep
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_adapt_color_living_room_adaptive_lighting
+            name: Living Room Colour
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_adapt_brightness_living_room_adaptive_lighting
+            name: Living Room Brightness
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_adapt_color_bedroom_adaptive_lighting
+            name: Bedroom Colour
+          - type: custom:mushroom-entity-card
+            entity: switch.adaptive_lighting_adapt_brightness_bedroom_adaptive_lighting
+            name: Bedroom Brightness
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:cctv
+            heading: Cameras & Alarm
+            heading_style: title
+          - type: custom:mushroom-entity-card
+            entity: switch.bedroom_motion_detection_2
+            name: Bedroom Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: switch.hallway_camera_motion_detection
+            name: Hallway Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: switch.entrance_motion_detection
+            name: Entrance Motion Detection
+          - type: custom:mushroom-entity-card
+            entity: switch.bedroom_live_stream
+            name: Bedroom Live Stream
+          - type: custom:mushroom-entity-card
+            entity: switch.hallway_camera_live_stream
+            name: Hallway Live Stream
+          - type: custom:mushroom-entity-card
+            entity: switch.london_alarm_siren
+            name: Alarm Siren
       - type: grid
         cards:
           - type: heading
