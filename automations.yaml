@@ -1014,13 +1014,10 @@
       domain: alarm_control_panel
       entity_id: alarm_control_panel.london_alarm
       type: disarm
-  - service: script.adaptive_lighting_scene_mode
+  - service: script.adaptive_lighting_day_mode
   - service: scene.turn_on
     target:
-      entity_id:
-      - scene.lr_good_morning
-      - scene.hr_good_morning
-      - scene.br_good_morning
+      entity_id: scene.br_good_morning
     data:
       transition: 8
   - parallel:

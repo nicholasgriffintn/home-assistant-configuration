@@ -1,14 +1,3 @@
-- name: HR Good Morning
-  id: hr_good_morning
-  entities:
-    light.hallway:
-      state: on
-      brightness: 120
-      color_temp_kelvin: 3800
-    light.entrance:
-      state: on
-      brightness: 110
-      color_temp_kelvin: 3600
 - name: HR Wind Down
   id: hr_wind_down
   entities:

@@ -16,23 +16,6 @@
       state: on
       brightness: 28
       rgb_color: [0, 105, 148]
-- name: LR Good Morning
-  id: lr_good_morning
-  entities:
-    light.living_room:
-      state: on
-      brightness: 165
-      color_temp_kelvin: 4200
-    light.sideboard_lights:
-      state: on
-      brightness: 110
-      color_temp_kelvin: 3500
-    light.wiz_rgbww_tunable_0368da:
-      state: on
-      brightness: 120
-      color_temp_kelvin: 3600
-    light.tv_strip:
-      state: off
 - name: LR Wind Down
   id: lr_wind_down
   entities:
