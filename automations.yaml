@@ -542,6 +542,19 @@
     entity_id:
     - input_boolean.bedtime
     - input_boolean.guest_mode_lm
+  conditions:
+  - condition: state
+    entity_id: input_boolean.good_morning
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.good_night
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.wind_down
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.watching_tv
+    state: 'off'
   actions:
   - choose:
     - conditions:
@@ -553,8 +566,12 @@
         state: 'off'
       sequence:
       - service: script.adaptive_lighting_sleep_mode
-    default:
-    - service: script.adaptive_lighting_day_mode
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.bedtime
+        state: 'off'
+      sequence:
+      - service: script.adaptive_lighting_day_mode
   mode: restart
 - id: '1775527344212'
   alias: 'HA Core: Auto-update patch versions'
@@ -944,12 +961,7 @@
   - service: input_boolean.turn_on
     target:
       entity_id: input_boolean.bedtime
-  - if:
-    - condition: state
-      entity_id: input_boolean.guest_mode_lm
-      state: 'off'
-    then:
-    - service: script.adaptive_lighting_sleep_mode
+  - service: script.adaptive_lighting_scene_mode
   - service: script.music_stop_house
   - service: scene.turn_on
     target:
@@ -991,7 +1003,18 @@
       - input_boolean.wind_down
       - input_boolean.good_night
       - input_boolean.watching_tv
-  - service: script.adaptive_lighting_day_mode
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: alarm_control_panel.london_alarm
+        state: disarmed
+    then:
+    - device_id: a7fe10c4353ad14df685757cd9b4c2a3
+      domain: alarm_control_panel
+      entity_id: alarm_control_panel.london_alarm
+      type: disarm
+  - service: script.adaptive_lighting_scene_mode
   - service: scene.turn_on
     target:
       entity_id:
