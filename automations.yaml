@@ -152,6 +152,15 @@
   - condition: time
     after: '17:00:00'
     before: 09:00:00
+  - condition: state
+    entity_id: input_boolean.wind_down
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.bedtime
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.good_night
+    state: 'off'
   - condition: device
     type: is_off
     device_id: 698f5064f1b18c46a302de08f8424974
@@ -247,6 +256,18 @@
   - condition: time
     after: '17:00:00'
     before: 09:00:00
+  - condition: state
+    entity_id: input_boolean.wind_down
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.bedtime
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.good_night
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.watching_tv
+    state: 'off'
   - condition: device
     type: is_off
     device_id: efcba9ccea8d46a6dbf7851704e5aa43
@@ -427,6 +448,15 @@
       - condition: state
         entity_id: input_boolean.guest_mode_lm
         state: 'off'
+      - condition: state
+        entity_id: input_boolean.wind_down
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.bedtime
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.good_night
+        state: 'off'
       - condition: time
         after: '18:00:00'
       - condition: state
@@ -470,6 +500,15 @@
   - condition: time
     after: '17:00:00'
     before: 09:00:00
+  - condition: state
+    entity_id: input_boolean.wind_down
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.bedtime
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.good_night
+    state: 'off'
   - condition: device
     type: is_off
     device_id: 150733d084480fdc5c9dde79401bbb48
@@ -524,6 +563,7 @@
     device_id: 150733d084480fdc5c9dde79401bbb48
     entity_id: d67e3538d6641188f4b1e096b5424267
     domain: light
+    brightness_pct: 20
   - delay:
       hours: 0
       minutes: 5
