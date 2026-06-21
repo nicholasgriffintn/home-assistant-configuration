@@ -3,12 +3,10 @@
   entities:
     light.hallway:
       state: on
-      brightness: 32
+      brightness: 12
       color_temp_kelvin: 2300
     light.entrance:
-      state: on
-      brightness: 28
-      color_temp_kelvin: 2300
+      state: off
 - name: HR Good Night
   id: hr_good_night
   entities:

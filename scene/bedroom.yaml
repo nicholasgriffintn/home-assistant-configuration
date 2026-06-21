@@ -13,23 +13,19 @@
   id: br_wind_down
   entities:
     light.bedroom:
-      state: on
-      brightness: 35
-      color_temp_kelvin: 2400
+      state: off
     light.wiz_rgbww_tunable_020656:
       state: on
-      brightness: 28
+      brightness: 14
       rgb_color: [255, 124, 55]
 - name: BR Good Night
   id: br_good_night
   entities:
     light.bedroom:
-      state: on
-      brightness: 18
-      color_temp_kelvin: 2200
+      state: off
     light.wiz_rgbww_tunable_020656:
       state: on
-      brightness: 12
+      brightness: 6
       rgb_color: [255, 92, 45]
 - name: BR Emergency
   id: br_emergency

@@ -20,20 +20,16 @@
   id: lr_wind_down
   entities:
     light.living_room:
-      state: on
-      brightness: 55
-      color_temp_kelvin: 2400
+      state: off
     light.sideboard_lights:
       state: on
-      brightness: 45
+      brightness: 18
       color_temp_kelvin: 2200
     light.wiz_rgbww_tunable_0368da:
-      state: on
-      brightness: 38
-      rgb_color: [255, 132, 54]
+      state: off
     light.tv_strip:
       state: on
-      brightness: 25
+      brightness: 12
       rgb_color: [255, 95, 64]
 - name: LR Good Night
   id: lr_good_night
