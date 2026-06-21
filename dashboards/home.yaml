@@ -249,10 +249,28 @@ views:
           - type: custom:advanced-camera-card
             cameras:
               - camera_entity: camera.living_room_live_view
+                triggers:
+                  occupancy: false
+                  motion: true
+                  entities:
+                    - binary_sensor.entrance_motion
+                  events: []
               - camera_entity: camera.entrance_live_view
+                triggers:
+                  occupancy: false
+                  motion: true
+                  entities:
+                    - binary_sensor.living_room
+                  events: []
             live:
-              display:
-                mode: grid
+              auto_play: []
+            view:
+              triggers:
+                show_trigger_status: true
+                filter_selected_camera: false
+                actions:
+                  trigger: live
+                  untrigger: default
       - type: grid
         cards:
           - type: conditional
